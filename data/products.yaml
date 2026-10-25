@@ -1,0 +1,203 @@
+# Seeded local-name catalogue for the demo shop. SYNTHETIC / approximate: prices are illustrative ₹ per unit.
+# Aliases are transliterations a shopkeeper might say or a speech engine might emit. Every alias must be unique
+# across products unless it is declared under generic_terms (shared words like "tel" or "dal").
+# Fields: sku, name, cat(egory), unit, price, brand?, aliases {en, hi, gu, mr}
+
+generic_terms:
+  tel:      {default: OIL-SUNFLOWER, candidates: [OIL-SUNFLOWER, OIL-GROUNDNUT, OIL-MUSTARD, OIL-COTTONSEED, OIL-SOYA]}
+  oil:      {default: OIL-SUNFLOWER, candidates: [OIL-SUNFLOWER, OIL-GROUNDNUT, OIL-MUSTARD, OIL-COTTONSEED, OIL-SOYA]}
+  dal:      {default: null, candidates: [DAL-TOOR, DAL-MOONG, DAL-MASOOR, DAL-CHANA, DAL-URAD]}
+  daal:     {default: null, candidates: [DAL-TOOR, DAL-MOONG, DAL-MASOOR, DAL-CHANA, DAL-URAD]}
+  chai:     {default: TEA-TATA, candidates: [TEA-TATA, TEA-WAGHBAKRI, TEA-REDLABEL]}
+  tea:      {default: TEA-TATA, candidates: [TEA-TATA, TEA-WAGHBAKRI, TEA-REDLABEL]}
+  chaa:     {default: TEA-WAGHBAKRI, candidates: [TEA-TATA, TEA-WAGHBAKRI, TEA-REDLABEL]}
+  sabun:    {default: SOAP-LIFEBUOY, candidates: [SOAP-LIFEBUOY, SOAP-LUX, SOAP-DETTOL, SOAP-SANTOOR]}
+  soap:     {default: SOAP-LIFEBUOY, candidates: [SOAP-LIFEBUOY, SOAP-LUX, SOAP-DETTOL, SOAP-SANTOOR]}
+  sabu:     {default: SOAP-LIFEBUOY, candidates: [SOAP-LIFEBUOY, SOAP-LUX, SOAP-DETTOL, SOAP-SANTOOR]}
+  biscuit:  {default: PARLEG, candidates: [PARLEG, MARIE, GOODDAY, MONACO, BOURBON]}
+  biskit:   {default: PARLEG, candidates: [PARLEG, MARIE, GOODDAY, MONACO, BOURBON]}
+  masala:   {default: null, candidates: [GARAM-MASALA, PAV-BHAJI-MASALA, CHAAT-MASALA, SAMBHAR-MASALA]}
+  doodh:    {default: MILK-TAAZA, candidates: [MILK-TAAZA, MILK-GOLD]}
+  dudh:     {default: MILK-TAAZA, candidates: [MILK-TAAZA, MILK-GOLD]}
+  milk:     {default: MILK-TAAZA, candidates: [MILK-TAAZA, MILK-GOLD]}
+  ghee:     {default: GHEE, candidates: [GHEE, GHEE-AMUL]}
+  detergent: {default: DETERGENT-SURF, candidates: [DETERGENT-SURF, DETERGENT-NIRMA, DETERGENT-WHEEL]}
+  powder:   {default: null, candidates: [DETERGENT-SURF, TALC, HALDI, MIRCHI-POWDER]}
+
+products:
+  # ---- grains & flours
+  - {sku: RICE-KOLAM, name: Rice (Kolam), cat: grains, unit: kg, price: 60, aliases: {en: [rice, kolam rice, kolam], hi: [chawal, chaawal, chaval, chawl], gu: [chokha, chokhaa, chokha kolam], mr: [tandul, tandool]}}
+  - {sku: RICE-BASMATI, name: Basmati Rice, cat: grains, unit: kg, price: 120, aliases: {en: [basmati, basmati rice], hi: [basmati chawal], gu: [basmati chokha], mr: [basmati tandul]}}
+  - {sku: RICE-SONA, name: Sona Masoori Rice, cat: grains, unit: kg, price: 70, aliases: {en: [sona masoori, sona masuri], hi: [sona chawal], gu: [sona chokha]}}
+  - {sku: POHA, name: Poha, cat: grains, unit: kg, price: 60, aliases: {en: [poha, flattened rice], hi: [chura, chuda], gu: [pauva, pauaa, pava], mr: [pohe]}}
+  - {sku: WHEAT, name: Wheat, cat: grains, unit: kg, price: 35, aliases: {en: [wheat], hi: [gehun, gehu, gehoon], gu: [ghau, ghaun], mr: [gahu]}}
+  - {sku: ATTA, name: Wheat Flour (Atta loose), cat: flour, unit: kg, price: 45, aliases: {en: [atta, wheat flour], hi: [aata, gehun ka aata, chakki atta], gu: [lot, ghau no lot], mr: [kanik, gavhache peeth]}}
+  - {sku: ATTA-AASHIRVAAD, name: Aashirvaad Atta 5kg, cat: flour, unit: packet, price: 290, brand: Aashirvaad, aliases: {en: [aashirvaad, aashirvaad atta, ashirwad, ashirwad atta]}}
+  - {sku: MAIDA, name: Maida, cat: flour, unit: kg, price: 50, aliases: {en: [maida, refined flour], hi: [mayda], gu: [mendo, menda], mr: [maida peeth]}}
+  - {sku: SOOJI, name: Sooji (Rava), cat: flour, unit: kg, price: 55, aliases: {en: [sooji, semolina, rava], hi: [suji, sujee], gu: [ravo, rawo], mr: [rawa]}}
+  - {sku: BESAN, name: Besan, cat: flour, unit: kg, price: 100, aliases: {en: [besan, gram flour], hi: [besun], gu: [chana no lot], mr: [harbhara peeth]}}
+  - {sku: JOWAR, name: Jowar, cat: grains, unit: kg, price: 50, aliases: {en: [jowar, sorghum], hi: [jwar, juar], gu: [juwar], mr: [jwari]}}
+  - {sku: BAJRA, name: Bajra, cat: grains, unit: kg, price: 40, aliases: {en: [bajra, pearl millet], hi: [baajra], gu: [bajri, baajri]}}
+  - {sku: RAGI, name: Ragi, cat: grains, unit: kg, price: 60, aliases: {en: [ragi, finger millet], hi: [mandua], gu: [nagli], mr: [nachni]}}
+  - {sku: SABUDANA, name: Sabudana, cat: grains, unit: kg, price: 90, aliases: {en: [sabudana, sago], hi: [saboodana, sabudaana], gu: [sabudano]}}
+  - {sku: DALIA, name: Dalia (Broken Wheat), cat: grains, unit: kg, price: 50, aliases: {en: [dalia, broken wheat], hi: [daliya], gu: [fada, ghau na fada]}}
+  - {sku: MAKAI-ATTA, name: Maize Flour, cat: flour, unit: kg, price: 50, aliases: {en: [maize flour, makki atta], hi: [makki ka aata, makka aata], gu: [makai no lot], mr: [maka peeth]}}
+  # ---- pulses
+  - {sku: DAL-TOOR, name: Toor Dal, cat: pulses, unit: kg, price: 160, aliases: {en: [toor dal, toor, arhar], hi: [arhar dal, tur dal, toor daal, arhar ki dal], gu: [tuvar dal, tuver dal, tuvar, tuver], mr: [turdal, tur daal]}}
+  - {sku: DAL-MOONG, name: Moong Dal, cat: pulses, unit: kg, price: 130, aliases: {en: [moong dal, yellow moong], hi: [moong, mung dal, moong daal, moong ki dal], gu: [mag ni dal, mag dal, mogar], mr: [mug dal]}}
+  - {sku: MOONG-WHOLE, name: Whole Moong, cat: pulses, unit: kg, price: 120, aliases: {en: [green gram, whole moong], hi: [sabut moong, hari moong], gu: [mag, aakha mag], mr: [mug]}}
+  - {sku: DAL-MASOOR, name: Masoor Dal, cat: pulses, unit: kg, price: 110, aliases: {en: [masoor dal, red lentil], hi: [masoor, masur, masoor daal], gu: [masoor ni dal], mr: [masur dal]}}
+  - {sku: DAL-CHANA, name: Chana Dal, cat: pulses, unit: kg, price: 95, aliases: {en: [chana dal, bengal gram], hi: [chane ki dal, chana daal], gu: [chana ni dal], mr: [harbhara dal]}}
+  - {sku: DAL-URAD, name: Urad Dal, cat: pulses, unit: kg, price: 140, aliases: {en: [urad dal, black gram], hi: [urad, udad, urad daal], gu: [adad dal, adad, adad ni dal], mr: [udid dal, udid]}}
+  - {sku: RAJMA, name: Rajma, cat: pulses, unit: kg, price: 150, aliases: {en: [rajma, kidney beans], hi: [rajmah, raajma]}}
+  - {sku: CHANA-KABULI, name: Kabuli Chana, cat: pulses, unit: kg, price: 130, aliases: {en: [kabuli chana, chickpea, chole], hi: [chhole, safed chana], gu: [kabuli chana], mr: [kabuli harbhara]}}
+  - {sku: CHANA-KALA, name: Kala Chana, cat: pulses, unit: kg, price: 90, aliases: {en: [kala chana, black chickpea], hi: [chana, desi chana, chane], mr: [harbhara]}}
+  - {sku: LOBIA, name: Lobia, cat: pulses, unit: kg, price: 110, aliases: {en: [lobia, black eyed beans], hi: [lobiya], gu: [chora, choli], mr: [chavli]}}
+  - {sku: MATKI, name: Matki (Moth Beans), cat: pulses, unit: kg, price: 120, aliases: {en: [moth beans, matki], hi: [moth], gu: [math], mr: [matki usal]}}
+  - {sku: VAL, name: Val (Field Beans), cat: pulses, unit: kg, price: 130, aliases: {en: [field beans], gu: [val, val ni dal], mr: [vaal]}}
+  - {sku: SOYA-CHUNKS, name: Soya Chunks 200g, cat: pulses, unit: packet, price: 45, aliases: {en: [soya chunks, nutrela, soya], hi: [soya badi, soyabean badi]}}
+  # ---- oils & fats
+  - {sku: OIL-SUNFLOWER, name: Sunflower Oil (loose), cat: oils, unit: l, price: 150, aliases: {en: [sunflower oil, refined oil, refined], hi: [refined tel, surajmukhi tel], gu: [sunflower tel], mr: [surajmukhi tel]}}
+  - {sku: OIL-MUSTARD, name: Mustard Oil, cat: oils, unit: l, price: 170, aliases: {en: [mustard oil], hi: [sarson ka tel, sarso tel, sarson tel, kadwa tel], gu: [rai nu tel, sarso nu tel], mr: [mohari tel]}}
+  - {sku: OIL-GROUNDNUT, name: Groundnut Oil, cat: oils, unit: l, price: 190, aliases: {en: [groundnut oil, peanut oil], hi: [moongfali tel, mungfali ka tel, moongfali ka tel], gu: [sing tel, singtel, singdana tel, sing nu tel], mr: [shengdana tel]}}
+  - {sku: OIL-COTTONSEED, name: Cottonseed Oil, cat: oils, unit: l, price: 140, aliases: {en: [cottonseed oil], hi: [binola tel], gu: [kapasiya tel, kapas tel, kapasiyu tel]}}
+  - {sku: OIL-SOYA, name: Soybean Oil, cat: oils, unit: l, price: 135, aliases: {en: [soybean oil, soya oil], hi: [soyabean tel], gu: [soya tel]}}
+  - {sku: OIL-FORTUNE, name: Fortune Sunflower Oil 1L, cat: oils, unit: packet, price: 165, brand: Fortune, aliases: {en: [fortune, fortune oil], hi: [fortune tel]}}
+  - {sku: GHEE, name: Ghee (loose), cat: dairy, unit: kg, price: 600, aliases: {en: [clarified butter, desi ghee], hi: [shuddh ghee, asli ghee], mr: [toop, tup]}}
+  - {sku: GHEE-AMUL, name: Amul Ghee 1L, cat: dairy, unit: box, price: 650, brand: Amul, aliases: {en: [amul ghee], gu: [amul nu ghee]}}
+  - {sku: VANASPATI, name: Vanaspati (Dalda), cat: oils, unit: kg, price: 150, aliases: {en: [vanaspati, dalda], hi: [dalda ghee]}}
+  - {sku: OIL-COCONUT, name: Parachute Coconut Oil, cat: personal_care, unit: bottle, price: 110, brand: Parachute, aliases: {en: [coconut oil, parachute], hi: [nariyal tel, nariyal ka tel], gu: [naliyer tel, topra tel], mr: [khobrel tel]}}
+  # ---- salt & spices
+  - {sku: SALT-TATA, name: Tata Salt 1kg, cat: spices, unit: packet, price: 28, brand: Tata, aliases: {en: [salt, tata salt], hi: [namak, tata namak, noon], gu: [mithu, meethu], mr: [meeth]}}
+  - {sku: SALT-ROCK, name: Rock Salt (Sendha), cat: spices, unit: kg, price: 80, aliases: {en: [rock salt], hi: [sendha namak, sendha], gu: [sindhav, sindhav mithu], mr: [saindhav]}}
+  - {sku: HALDI, name: Turmeric Powder, cat: spices, unit: kg, price: 300, aliases: {en: [turmeric, haldi], hi: [haldee, haldi powder], gu: [haldar], mr: [halad]}}
+  - {sku: MIRCHI-POWDER, name: Red Chilli Powder, cat: spices, unit: kg, price: 350, aliases: {en: [red chilli powder, chilli powder], hi: [lal mirch, laal mirch, mirchi powder, mirch], gu: [marchu, lal marchu, marchu powder], mr: [tikhat, lal tikhat]}}
+  - {sku: DHANIA-POWDER, name: Coriander Powder, cat: spices, unit: kg, price: 260, aliases: {en: [coriander powder, dhania powder], hi: [dhaniya, dhania, dhaniya powder], gu: [dhana, dhana powder, dhana jiru], mr: [dhane pood]}}
+  - {sku: JEERA, name: Cumin Seeds, cat: spices, unit: kg, price: 600, aliases: {en: [cumin, jeera], hi: [zeera, jira], gu: [jiru, jeeru], mr: [jire]}}
+  - {sku: RAI, name: Mustard Seeds, cat: spices, unit: kg, price: 160, aliases: {en: [mustard seeds], hi: [rai, sarson dana], mr: [mohari]}}
+  - {sku: GARAM-MASALA, name: Garam Masala 100g, cat: spices, unit: packet, price: 60, aliases: {en: [garam masala], gu: [garam masalo]}}
+  - {sku: HING, name: Asafoetida (Hing), cat: spices, unit: packet, price: 50, aliases: {en: [asafoetida, hing], hi: [heeng]}}
+  - {sku: METHI-SEEDS, name: Fenugreek Seeds, cat: spices, unit: kg, price: 180, aliases: {en: [fenugreek, methi dana], hi: [methi], mr: [methi dane]}}
+  - {sku: AJWAIN, name: Ajwain, cat: spices, unit: kg, price: 400, aliases: {en: [carom seeds, ajwain], hi: [ajvain, ajwayan], gu: [ajmo], mr: [ova]}}
+  - {sku: SAUNF, name: Fennel (Saunf), cat: spices, unit: kg, price: 300, aliases: {en: [fennel, saunf], hi: [sonf, saunf dana], gu: [variyali, variyari], mr: [badishep]}}
+  - {sku: ELAICHI, name: Cardamom, cat: spices, unit: kg, price: 3000, aliases: {en: [cardamom, elaichi], hi: [ilaichi, ilayachi], gu: [elcho, ilaychi], mr: [velchi]}}
+  - {sku: LAUNG, name: Cloves, cat: spices, unit: kg, price: 1200, aliases: {en: [cloves, clove], hi: [laung, long], gu: [laving], mr: [lavang]}}
+  - {sku: KALI-MIRCH, name: Black Pepper, cat: spices, unit: kg, price: 900, aliases: {en: [black pepper, pepper], hi: [kali mirch, kaali mirch], gu: [kala mari, mari powder], mr: [miri]}}
+  - {sku: DALCHINI, name: Cinnamon, cat: spices, unit: kg, price: 600, aliases: {en: [cinnamon], hi: [dalchini, daalchini], gu: [taj]}}
+  - {sku: TEJ-PATTA, name: Bay Leaf, cat: spices, unit: packet, price: 20, aliases: {en: [bay leaf], hi: [tej patta, tejpatta], gu: [tamal patra], mr: [tamalpatra]}}
+  - {sku: IMLI, name: Tamarind, cat: spices, unit: kg, price: 200, aliases: {en: [tamarind], hi: [imli, imlee], gu: [aamli, amli], mr: [chinch]}}
+  - {sku: KOKUM, name: Kokum, cat: spices, unit: kg, price: 400, aliases: {en: [kokum], gu: [kokam], mr: [amsul]}}
+  - {sku: PAV-BHAJI-MASALA, name: Pav Bhaji Masala, cat: spices, unit: packet, price: 70, aliases: {en: [pav bhaji masala, pavbhaji masala]}}
+  - {sku: CHAAT-MASALA, name: Chaat Masala, cat: spices, unit: packet, price: 45, aliases: {en: [chaat masala, chat masala]}}
+  - {sku: SAMBHAR-MASALA, name: Sambhar Masala, cat: spices, unit: packet, price: 55, aliases: {en: [sambhar masala, sambar masala]}}
+  - {sku: KASURI-METHI, name: Kasuri Methi, cat: spices, unit: packet, price: 30, aliases: {en: [kasuri methi, kasoori methi]}}
+  # ---- sweeteners
+  - {sku: SUGAR, name: Sugar, cat: sweeteners, unit: kg, price: 45, aliases: {en: [sugar], hi: [cheeni, chini, shakkar], gu: [khand, saakar, sakar, saakar], mr: [sakhar]}}
+  - {sku: JAGGERY, name: Jaggery (Gud), cat: sweeteners, unit: kg, price: 70, aliases: {en: [jaggery], hi: [gud, gur], gu: [gol], mr: [gul]}}
+  - {sku: MISHRI, name: Mishri (Rock Sugar), cat: sweeteners, unit: kg, price: 120, aliases: {en: [rock sugar, mishri], hi: [misri]}}
+  - {sku: HONEY, name: Dabur Honey, cat: sweeteners, unit: bottle, price: 220, brand: Dabur, aliases: {en: [honey, dabur honey], hi: [shahad, shehad], gu: [madh], mr: [madh honey]}}
+  # ---- dairy
+  - {sku: MILK-TAAZA, name: Amul Taaza Milk 500ml, cat: dairy, unit: packet, price: 28, brand: Amul, aliases: {en: [amul taaza, taaza, toned milk], hi: [taaza doodh], gu: [amul dudh]}}
+  - {sku: MILK-GOLD, name: Amul Gold Milk 500ml, cat: dairy, unit: packet, price: 34, brand: Amul, aliases: {en: [amul gold, gold milk, full cream milk], hi: [gold doodh]}}
+  - {sku: CURD, name: Curd (Dahi) 400g, cat: dairy, unit: packet, price: 35, aliases: {en: [curd, dahi], hi: [dahee], gu: [dahi nu packet]}}
+  - {sku: BUTTER, name: Amul Butter 100g, cat: dairy, unit: packet, price: 58, brand: Amul, aliases: {en: [butter, amul butter], hi: [makhan, makkhan], mr: [loni]}}
+  - {sku: PANEER, name: Paneer, cat: dairy, unit: kg, price: 400, aliases: {en: [paneer, cottage cheese], hi: [panir]}}
+  - {sku: CHEESE, name: Amul Cheese Slices, cat: dairy, unit: packet, price: 145, brand: Amul, aliases: {en: [cheese, cheese slice, amul cheese]}}
+  - {sku: BUTTERMILK, name: Chaas 500ml, cat: dairy, unit: packet, price: 15, aliases: {en: [buttermilk, chaas], hi: [chhaas, chhachh, mattha], gu: [chhash, chhas], mr: [tak]}}
+  # ---- biscuits & snacks
+  - {sku: PARLEG, name: Parle-G, cat: biscuits, unit: packet, price: 10, brand: Parle, aliases: {en: [parle g, parleg, parle, parle ji, glucose biscuit], hi: [parle gee, paarle ji]}}
+  - {sku: MARIE, name: Marie Gold, cat: biscuits, unit: packet, price: 30, brand: Britannia, aliases: {en: [marie, marie gold, marie biscuit]}}
+  - {sku: GOODDAY, name: Good Day, cat: biscuits, unit: packet, price: 30, brand: Britannia, aliases: {en: [good day, goodday, gud de]}}
+  - {sku: MONACO, name: Monaco, cat: biscuits, unit: packet, price: 30, brand: Parle, aliases: {en: [monaco, monako]}}
+  - {sku: BOURBON, name: Bourbon, cat: biscuits, unit: packet, price: 35, brand: Britannia, aliases: {en: [bourbon, bourbon biscuit, borbon]}}
+  - {sku: HIDESEEK, name: "Hide & Seek", cat: biscuits, unit: packet, price: 40, brand: Parle, aliases: {en: [hide and seek, hide n seek, hide & seek]}}
+  - {sku: KRACKJACK, name: Krackjack, cat: biscuits, unit: packet, price: 30, brand: Parle, aliases: {en: [krackjack, crack jack, krack jack]}}
+  - {sku: BHUJIA, name: Haldiram Bhujia 200g, cat: snacks, unit: packet, price: 55, brand: Haldiram, aliases: {en: [bhujia, aloo bhujia, haldiram bhujia, haldiram], hi: [bhujiya]}}
+  - {sku: SEV, name: Sev, cat: snacks, unit: kg, price: 240, aliases: {en: [sev, ratlami sev], gu: [zini sev, jini sev]}}
+  - {sku: GATHIYA, name: Gathiya, cat: snacks, unit: kg, price: 260, aliases: {en: [gathiya, ganthiya], gu: [ganthia, gathia, bhavnagri gathiya]}}
+  - {sku: KURKURE, name: Kurkure, cat: snacks, unit: packet, price: 20, aliases: {en: [kurkure, kurkurey]}}
+  - {sku: CHIPS, name: "Lay's Chips", cat: snacks, unit: packet, price: 20, aliases: {en: [lays, lays chips, chips, wafers], gu: [wafer, vefar, wefar]}}
+  - {sku: KHAKHRA, name: Khakhra, cat: snacks, unit: packet, price: 60, aliases: {en: [khakhra, khakra], gu: [khakhara]}}
+  - {sku: NAMKEEN, name: Mixture Namkeen, cat: snacks, unit: kg, price: 220, aliases: {en: [namkeen, mixture], hi: [namkin], gu: [chevdo, chevado], mr: [chivda, chiwda]}}
+  - {sku: PEANUTS, name: Peanuts, cat: snacks, unit: kg, price: 140, aliases: {en: [peanuts, peanut, groundnut], hi: [moongfali, mungfali, moongphali], gu: [sing, singdana, sing dana], mr: [shengdana]}}
+  - {sku: MAKHANA, name: Makhana, cat: snacks, unit: packet, price: 120, aliases: {en: [makhana, fox nut], hi: [phool makhana]}}
+  # ---- instant & bakery
+  - {sku: MAGGI, name: Maggi Noodles, cat: instant_food, unit: packet, price: 14, brand: Nestle, aliases: {en: [maggi, maggie, noodles, megi, magi]}}
+  - {sku: YIPPEE, name: Yippee Noodles, cat: instant_food, unit: packet, price: 15, aliases: {en: [yippee, yippie]}}
+  - {sku: VERMICELLI, name: Vermicelli, cat: instant_food, unit: packet, price: 40, aliases: {en: [vermicelli], hi: [seviyan, sevaiyan, semiya], mr: [shevaya]}}
+  - {sku: BREAD, name: Bread, cat: bakery, unit: packet, price: 45, aliases: {en: [bread, white bread, brown bread], hi: [double roti, dabal roti, dabalroti], gu: [bred, brad]}}
+  - {sku: LADI-PAV, name: Laadi Pav, cat: bakery, unit: packet, price: 40, aliases: {en: [laadi pav, ladi pav, pav ladi, pav packet]}}
+  - {sku: RUSK, name: Rusk / Toast, cat: bakery, unit: packet, price: 50, aliases: {en: [rusk, toast, toast biscuit], hi: [tost]}}
+  - {sku: KHARI, name: Khari, cat: bakery, unit: packet, price: 60, aliases: {en: [khari, khari biscuit]}}
+  - {sku: CORNFLAKES, name: "Kellogg's Corn Flakes", cat: instant_food, unit: box, price: 190, aliases: {en: [cornflakes, corn flakes, kelloggs]}}
+  - {sku: OATS, name: Quaker Oats, cat: instant_food, unit: box, price: 99, aliases: {en: [oats, quaker, quaker oats]}}
+  # ---- beverages
+  - {sku: TEA-TATA, name: Tata Tea Premium 250g, cat: beverages, unit: packet, price: 140, brand: Tata, aliases: {en: [tata tea, tata chai, chai patti, tea leaves], hi: [chaipatti, chai ki patti], gu: [chaa ni bhuki, chah ni bhuki], mr: [chaha patti]}}
+  - {sku: TEA-WAGHBAKRI, name: Wagh Bakri Tea 250g, cat: beverages, unit: packet, price: 145, brand: Wagh Bakri, aliases: {en: [wagh bakri, waghbakri, vagh bakri, wagh bakri chai]}}
+  - {sku: TEA-REDLABEL, name: Red Label Tea 250g, cat: beverages, unit: packet, price: 150, brand: Brooke Bond, aliases: {en: [red label, brooke bond, redlabel]}}
+  - {sku: COFFEE, name: Nescafe Classic 50g, cat: beverages, unit: packet, price: 160, brand: Nestle, aliases: {en: [coffee, nescafe, nescafe coffee], hi: [kaafi, kofi]}}
+  - {sku: BRU, name: Bru Coffee 50g, cat: beverages, unit: packet, price: 100, aliases: {en: [bru, bru coffee]}}
+  - {sku: BOURNVITA, name: Bournvita 500g, cat: beverages, unit: box, price: 250, aliases: {en: [bournvita, bournvita powder, bornvita]}}
+  - {sku: HORLICKS, name: Horlicks 500g, cat: beverages, unit: box, price: 280, aliases: {en: [horlicks, horlix]}}
+  - {sku: ROOHAFZA, name: Rooh Afza 750ml, cat: beverages, unit: bottle, price: 180, aliases: {en: [rooh afza, roohafza, sharbat], hi: [sharbat bottle]}}
+  - {sku: COLD-DRINK, name: Thums Up 750ml, cat: beverages, unit: bottle, price: 45, aliases: {en: [thums up, thumbs up, cold drink, coke, pepsi, soft drink, colddrink]}}
+  - {sku: FROOTI, name: Frooti, cat: beverages, unit: packet, price: 10, aliases: {en: [frooti, fruti, mango drink, maaza]}}
+  - {sku: SODA, name: Soda Water, cat: beverages, unit: bottle, price: 20, aliases: {en: [soda, soda water, soda bottle]}}
+  # ---- dry fruits (Diwali)
+  - {sku: KAJU, name: Cashew, cat: dry_fruits, unit: kg, price: 900, aliases: {en: [cashew, kaju, cashews], hi: [kaaju]}}
+  - {sku: BADAM, name: Almond, cat: dry_fruits, unit: kg, price: 800, aliases: {en: [almond, almonds, badam], hi: [badaam]}}
+  - {sku: KISHMISH, name: Raisins, cat: dry_fruits, unit: kg, price: 400, aliases: {en: [raisins, kishmish], hi: [kishmis], gu: [kismis, darakh], mr: [manuka]}}
+  - {sku: AKHROT, name: Walnut, cat: dry_fruits, unit: kg, price: 1000, aliases: {en: [walnut, walnuts, akhrot], hi: [akhrot giri]}}
+  - {sku: PISTA, name: Pistachio, cat: dry_fruits, unit: kg, price: 1400, aliases: {en: [pistachio, pista]}}
+  - {sku: KHAJUR, name: Dates, cat: dry_fruits, unit: kg, price: 250, aliases: {en: [dates, khajur], hi: [khajoor], mr: [khajoor pack]}}
+  - {sku: COPRA, name: Dry Coconut (Copra), cat: dry_fruits, unit: kg, price: 250, aliases: {en: [dry coconut, copra, khopra], hi: [gola, sukha nariyal], gu: [topru, kopru], mr: [khobra]}}
+  - {sku: COCONUT, name: Coconut, cat: pooja, unit: pcs, price: 40, aliases: {en: [coconut], hi: [nariyal, nariyel], gu: [naliyer, shrifal], mr: [naral]}}
+  # ---- personal care
+  - {sku: SOAP-LIFEBUOY, name: Lifebuoy Soap, cat: personal_care, unit: bar, price: 35, aliases: {en: [lifebuoy, lifeboy, lifebuoy sabun]}}
+  - {sku: SOAP-LUX, name: Lux Soap, cat: personal_care, unit: bar, price: 40, aliases: {en: [lux, lux sabun, lux soap]}}
+  - {sku: SOAP-DETTOL, name: Dettol Soap, cat: personal_care, unit: bar, price: 45, aliases: {en: [dettol soap, dettol sabun, dettol]}}
+  - {sku: SOAP-SANTOOR, name: Santoor Soap, cat: personal_care, unit: bar, price: 35, aliases: {en: [santoor, santur, santoor sabun]}}
+  - {sku: SHAMPOO, name: Clinic Plus Sachet, cat: personal_care, unit: packet, price: 2, aliases: {en: [shampoo, shampoo sachet, clinic plus, sachet], hi: [shampu]}}
+  - {sku: TOOTHPASTE, name: Colgate Toothpaste, cat: personal_care, unit: box, price: 99, brand: Colgate, aliases: {en: [colgate, toothpaste, paste, colget], hi: [manjan, dant manjan]}}
+  - {sku: TOOTHBRUSH, name: Toothbrush, cat: personal_care, unit: pcs, price: 30, aliases: {en: [toothbrush, brush], hi: [brash]}}
+  - {sku: HAIR-OIL, name: Navratna Oil, cat: personal_care, unit: bottle, price: 120, aliases: {en: [navratna, navratna oil, hair oil], hi: [navratna tel, thanda tel, baal ka tel]}}
+  - {sku: TALC, name: "Pond's Powder", cat: personal_care, unit: box, price: 130, aliases: {en: [talc, ponds, ponds powder, talcum]}}
+  - {sku: RAZOR, name: Gillette Guard Razor, cat: personal_care, unit: pcs, price: 30, aliases: {en: [razor, blade, gillette, gilet]}}
+  - {sku: PADS, name: Whisper Pads, cat: personal_care, unit: packet, price: 90, aliases: {en: [whisper, sanitary pads, pads]}}
+  # ---- cleaning & household
+  - {sku: DETERGENT-SURF, name: Surf Excel 1kg, cat: cleaning, unit: packet, price: 140, aliases: {en: [surf, surf excel, washing powder], hi: [kapde dhone ka powder], gu: [dhovano powder]}}
+  - {sku: DETERGENT-NIRMA, name: Nirma 1kg, cat: cleaning, unit: packet, price: 90, aliases: {en: [nirma, nirma powder]}}
+  - {sku: DETERGENT-WHEEL, name: Wheel 1kg, cat: cleaning, unit: packet, price: 80, aliases: {en: [wheel, wheel powder]}}
+  - {sku: RIN-BAR, name: Rin Bar, cat: cleaning, unit: bar, price: 20, aliases: {en: [rin, rin bar, rin sabun], hi: [kapde ka sabun, kapde dhone ka sabun]}}
+  - {sku: VIM-BAR, name: Vim Bar, cat: cleaning, unit: bar, price: 20, aliases: {en: [vim, vim bar], hi: [bartan ka sabun, bartan sabun], gu: [vasan nu sabu]}}
+  - {sku: HARPIC, name: Harpic, cat: cleaning, unit: bottle, price: 100, aliases: {en: [harpic, toilet cleaner, harpik]}}
+  - {sku: PHENYL, name: Phenyl / Floor Cleaner, cat: cleaning, unit: bottle, price: 110, aliases: {en: [phenyl, floor cleaner, lizol], hi: [phenyle, finail, fenyl]}}
+  - {sku: MATCHBOX, name: Matchbox, cat: household, unit: box, price: 2, aliases: {en: [matchbox, match box], hi: [machis, maachis], gu: [diwasli, baakas, divasali], mr: [kadepeti]}}
+  - {sku: AGARBATTI, name: Agarbatti, cat: pooja, unit: packet, price: 50, aliases: {en: [agarbatti, incense, incense sticks], hi: [agarbatti packet], mr: [udbatti]}}
+  - {sku: CANDLE, name: Candle, cat: household, unit: pcs, price: 5, aliases: {en: [candle, candles], hi: [mombatti, mom batti], gu: [meenbatti, minbatti]}}
+  - {sku: MOSQUITO-COIL, name: Good Knight Coil, cat: household, unit: box, price: 40, aliases: {en: [coil, mosquito coil, good knight, goodknight, mortein], hi: [machhar coil, machhar wala coil]}}
+  - {sku: BULB, name: LED Bulb 9W, cat: household, unit: pcs, price: 100, aliases: {en: [bulb, led bulb, led], hi: [balb]}}
+  - {sku: BATTERY, name: AA Battery, cat: household, unit: pcs, price: 20, aliases: {en: [battery, batteries, cell], hi: [battary, betri]}}
+  - {sku: GARBAGE-BAGS, name: Garbage Bags, cat: household, unit: packet, price: 80, aliases: {en: [garbage bag, garbage bags, dustbin bag], hi: [kachra thaili, kachre ki thaili]}}
+  - {sku: DIYA, name: Clay Diya, cat: pooja, unit: pcs, price: 3, aliases: {en: [clay diya, diya pack, deepak], hi: [mitti ke diye, mitti ka diya, diyas], gu: [divo, diva, koDiyu], mr: [panti]}}
+  - {sku: CAMPHOR, name: Camphor, cat: pooja, unit: packet, price: 30, aliases: {en: [camphor], hi: [kapur, kapoor, kafoor], gu: [kapoor goti], mr: [karpur]}}
+  - {sku: KUMKUM, name: Kumkum / Roli, cat: pooja, unit: packet, price: 10, aliases: {en: [kumkum, roli], gu: [kanku], mr: [kunku]}}
+  - {sku: RANGOLI, name: Rangoli Colour, cat: pooja, unit: packet, price: 20, aliases: {en: [rangoli, rangoli colour, rangoli color]}}
+  # ---- vegetables & fresh
+  - {sku: ONION, name: Onion, cat: vegetables, unit: kg, price: 40, aliases: {en: [onion, onions], hi: [pyaz, pyaaz, pyaj], gu: [dungli, dungri, kanda], mr: [kaanda]}}
+  - {sku: POTATO, name: Potato, cat: vegetables, unit: kg, price: 30, aliases: {en: [potato, potatoes], hi: [aloo, alu, aaloo], gu: [batata, bateta], mr: [batate]}}
+  - {sku: GARLIC, name: Garlic, cat: vegetables, unit: kg, price: 200, aliases: {en: [garlic], hi: [lahsun, lehsun, lasun], gu: [lasan]}}
+  - {sku: GINGER, name: Ginger, cat: vegetables, unit: kg, price: 120, aliases: {en: [ginger], hi: [adrak], gu: [aadu], mr: [aale]}}
+  - {sku: TOMATO, name: Tomato, cat: vegetables, unit: kg, price: 30, aliases: {en: [tomato, tomatoes], hi: [tamatar, tamaatar], gu: [tameta, tamata]}}
+  - {sku: EGGS, name: Eggs, cat: dairy, unit: pcs, price: 7, aliases: {en: [eggs, egg], hi: [anda, ande, anday, ande wale], gu: [inda, eda], mr: [andi]}}
+  - {sku: LEMON, name: Lemon, cat: vegetables, unit: pcs, price: 5, aliases: {en: [lemon, lemons], hi: [nimbu, neebu, nimboo], gu: [limbu, limbo]}}
+  - {sku: GREEN-CHILLI, name: Green Chilli, cat: vegetables, unit: kg, price: 80, aliases: {en: [green chilli, green chili], hi: [hari mirch, hari mirchi], gu: [lila marcha, marcha], mr: [hirvi mirchi]}}
+  # ---- misc
+  - {sku: PAPAD, name: Lijjat Papad, cat: misc, unit: packet, price: 60, aliases: {en: [papad, lijjat, lijjat papad], hi: [papar]}}
+  - {sku: PICKLE, name: Mango Pickle, cat: misc, unit: bottle, price: 120, aliases: {en: [pickle, mango pickle], hi: [achar, achaar, aachar], gu: [athanu, athaanu], mr: [lonche]}}
+  - {sku: KETCHUP, name: Kissan Ketchup, cat: misc, unit: bottle, price: 110, aliases: {en: [ketchup, tomato sauce, sauce, kissan], hi: [kechup]}}
+  - {sku: BAKING-SODA, name: Baking Soda, cat: misc, unit: packet, price: 20, aliases: {en: [baking soda, cooking soda], hi: [meetha soda, khane ka soda], gu: [khavano soda]}}
+  - {sku: VINEGAR, name: Vinegar, cat: misc, unit: bottle, price: 40, aliases: {en: [vinegar], hi: [sirka]}}
+  - {sku: CUSTARD, name: Custard Powder, cat: misc, unit: packet, price: 70, aliases: {en: [custard, custard powder]}}
+  - {sku: JAM, name: Kissan Jam, cat: misc, unit: bottle, price: 150, aliases: {en: [jam, mixed fruit jam]}}
+  - {sku: ICE-CREAM, name: Ice Cream Cup, cat: dairy, unit: pcs, price: 30, aliases: {en: [ice cream, icecream, ice-cream cup]}}

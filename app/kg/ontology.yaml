@@ -1,0 +1,73 @@
+# kirana-ledger ontology (schema). Instances (products, aliases) live in data/products.yaml.
+namespace: "https://kirana-ledger.example/ontology#"
+prefix: kl
+version: "0.1.0"
+
+classes:
+  Shop:
+    description: A kirana (neighbourhood grocery) store.
+    properties: {name: string, locality: string}
+    required: [name]
+  Customer:
+    description: A person who buys on credit (udhaar) from the shop.
+    properties: {name: string, given_name: string, surname: string, gender: string, locality: string, nickname: string}
+    required: [name, given_name]
+  Product:
+    description: A sellable item (generic or branded SKU).
+    properties: {sku: string, name: string, category: string, unit: string, unit_kind: string, price: number, brand: string}
+    required: [sku, name, category, unit, price]
+  Alias:
+    description: A local / regional name for a product (e.g. chawal, chokha, tandul for rice).
+    properties: {text: string, lang: string, canonical: string}
+    required: [text, lang]
+  LedgerEvent:
+    description: A credit sale, payment or return recorded in the ledger.
+    properties:
+      kind: string
+      amount: number
+      date: date
+      items: list
+      status: string
+      utterance: string
+      amount_source: string
+      history: list
+      supersedes: string
+    required: [kind, amount, date, status]
+    enums:
+      kind: [credit_sale, payment, return]
+      status: [active, voided]
+  Reminder:
+    description: A drafted (never sent) payment reminder.
+    properties: {language: string, text: string, balance: number, tone: string}
+    required: [language, text]
+
+relations:
+  # core relations from the brief
+  owes:            {domain: Customer, range: Shop, description: "Outstanding balance (materialised; amount on edge)"}
+  bought:          {domain: Customer, range: Product, description: "Customer bought product on credit (one edge per line item)"}
+  paid:            {domain: Customer, range: Shop, description: "Customer paid the shop (one edge per payment event)"}
+  alias_of:        {domain: Alias, range: Product, description: "Local name refers to product"}
+  belongs_to_shop: {domain: Customer, range: Shop, description: "Customer is on this shop's ledger"}
+  # supporting relations
+  recorded_for:    {domain: LedgerEvent, range: Customer, description: "Ledger event concerns customer"}
+  includes:        {domain: LedgerEvent, range: Product, description: "Ledger event line item"}
+  corrects:        {domain: LedgerEvent, range: LedgerEvent, description: "Correction supersedes an earlier event"}
+  about:           {domain: Reminder, range: Customer, description: "Reminder drafted for customer"}
+
+vocab:
+  categories: [staples, grains, pulses, oils, spices, sweeteners, flour, dairy, snacks, biscuits, beverages,
+               instant_food, bakery, dry_fruits, personal_care, household, cleaning, pooja, vegetables, misc]
+  units:
+    kg:     {kind: mass, base: kg, factor: 1.0, surface: [kg, kilo, kilogram, kgs, kilo gram, kilu, killa, keelo]}
+    g:      {kind: mass, base: kg, factor: 0.001, surface: [g, gm, gms, gram, grams, graam, gramm]}
+    ser:    {kind: mass, base: kg, factor: 0.933, surface: [ser, seer, sher]}
+    paav:   {kind: mass, base: kg, factor: 0.25, surface: [paav, pav, pao, paw, pau]}
+    l:      {kind: volume, base: l, factor: 1.0, surface: [l, litre, liter, ltr, litr, litar, leetar, lit]}
+    ml:     {kind: volume, base: l, factor: 0.001, surface: [ml, mili, mililitre, milliliter]}
+    pcs:    {kind: count, base: pcs, factor: 1.0, surface: [pcs, pc, piece, pieces, peece, nag, nang, adad, dana]}
+    dozen:  {kind: count, base: pcs, factor: 12.0, surface: [dozen, darjan, darjun, dazan, darzan]}
+    packet: {kind: pack, base: packet, factor: 1.0, surface: [packet, packets, pkt, paket, packit, pudi, pudiya, padikun, padiku, pouch]}
+    bottle: {kind: pack, base: packet, factor: 1.0, surface: [bottle, botal, batli, shishi]}
+    box:    {kind: pack, base: packet, factor: 1.0, surface: [box, dabba, dabbo, dibba, dibbi, dabi, carton]}
+    bar:    {kind: pack, base: packet, factor: 1.0, surface: [bar, tikki, goti, cake]}
+  languages: {en: English, hi: Hindi (transliterated), gu: Gujarati (transliterated), mr: Marathi (transliterated)}
