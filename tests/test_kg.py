@@ -79,7 +79,7 @@ def test_check_node_and_edge(onto):
     with pytest.raises(OntologyError, match="unknown properties"):
         onto.check_node("Shop", {"name": "x", "colour": "red"})
     with pytest.raises(OntologyError, match="not in"):
-        onto.check_node("LedgerEvent", {"kind": "gift", "amount": 1, "date": "2025-01-01", "status": "active"})
+        onto.check_node("LedgerEvent", {"kind": "gift", "amount": 1, "date": "2025-01-01", "status": "active", "customer_id": "c"})
     with pytest.raises(OntologyError, match="expects"):
         onto.check_edge("owes", "Shop", "Customer")
     with pytest.raises(OntologyError, match="unknown relation"):

@@ -1,0 +1,8 @@
+# Festive / wedding windows for the synthetic Jun-Nov 2025 ledger (approximate, demo shop in Gujarat).
+# kind festival|wedding count for "festival-season lateness"; minor = volume boost only.
+seasons:
+  - {id: wedding_summer, name: Summer wedding muhurats, kind: wedding,  start: 2025-06-01, end: 2025-06-10}
+  - {id: raksha_bandhan, name: Raksha Bandhan,          kind: minor, start: 2025-08-03, end: 2025-08-09}
+  - {id: navratri,       name: Navratri,                kind: festival, start: 2025-09-22, end: 2025-10-02}
+  - {id: diwali,         name: Diwali,                  kind: festival, start: 2025-10-10, end: 2025-10-25}
+  - {id: wedding_winter, name: Winter wedding season,   kind: wedding,  start: 2025-11-02, end: 2025-11-30}

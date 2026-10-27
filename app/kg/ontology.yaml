@@ -10,7 +10,7 @@ classes:
     required: [name]
   Customer:
     description: A person who buys on credit (udhaar) from the shop.
-    properties: {name: string, given_name: string, surname: string, gender: string, locality: string, nickname: string}
+    properties: {name: string, given_name: string, surname: string, gender: string, locality: string, nickname: string, created_from: string}
     required: [name, given_name]
   Product:
     description: A sellable item (generic or branded SKU).
@@ -32,13 +32,15 @@ classes:
       amount_source: string
       history: list
       supersedes: string
-    required: [kind, amount, date, status]
+      superseded_by: string
+      customer_id: string
+    required: [kind, amount, date, status, customer_id]
     enums:
       kind: [credit_sale, payment, return]
       status: [active, voided]
   Reminder:
     description: A drafted (never sent) payment reminder.
-    properties: {language: string, text: string, balance: number, tone: string}
+    properties: {language: string, text: string, balance: number, tone: string, customer_id: string, sent: string}
     required: [language, text]
 
 relations:

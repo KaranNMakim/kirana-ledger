@@ -28,6 +28,7 @@ ignore = ["E501"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-q"
+filterwarnings = ["ignore::ResourceWarning"]
 
 [tool.coverage.run]
 source = ["app"]

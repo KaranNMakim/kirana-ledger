@@ -1,0 +1,33 @@
+{
+  "seed": 42,
+  "period": [
+    "2025-06-01",
+    "2025-11-30"
+  ],
+  "customers": 60,
+  "events": 2674,
+  "by_kind": {
+    "credit_sale": 1554,
+    "payment": 1096,
+    "return": 24
+  },
+  "outstanding": 166850.17,
+  "graph": {
+    "nodes": {
+      "Product": 162,
+      "Alias": 769,
+      "Shop": 1,
+      "Customer": 60,
+      "LedgerEvent": 2674
+    },
+    "edges": {
+      "alias_of": 769,
+      "belongs_to_shop": 60,
+      "paid": 1096,
+      "owes": 60,
+      "bought": 3700,
+      "recorded_for": 2674,
+      "includes": 3724
+    }
+  }
+}
