@@ -24,7 +24,7 @@ def _load_dotenv(path: Path) -> None:
 @dataclass(frozen=True)
 class Settings:
     llm_mode: str = "mock"
-    anthropic_model: str = "claude-haiku-5-5"
+    anthropic_model: str = "claude-opus-5-5"
     db_path: str = str(ROOT / "data" / "kirana.db")
     today_override: str = DEMO_TODAY.isoformat()
     confirm_threshold: float = 0.75
@@ -44,7 +44,7 @@ class Settings:
             db = str(ROOT / db)
         return cls(
             llm_mode=os.environ.get("LLM_MODE", "mock").lower(),
-            anthropic_model=os.environ.get("ANTHROPIC_MODEL", "claude-haiku-5-5"),
+            anthropic_model=os.environ.get("ANTHROPIC_MODEL", "claude-opus-5-5"),
             db_path=db,
             today_override=os.environ.get("KIRANA_TODAY", DEMO_TODAY.isoformat()),
             confirm_threshold=float(os.environ.get("CONFIRM_THRESHOLD", "0.75")),

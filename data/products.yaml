@@ -179,7 +179,7 @@ products:
   - {sku: BULB, name: LED Bulb 9W, cat: household, unit: pcs, price: 100, aliases: {en: [bulb, led bulb, led], hi: [balb]}}
   - {sku: BATTERY, name: AA Battery, cat: household, unit: pcs, price: 20, aliases: {en: [battery, batteries, cell], hi: [battary, betri]}}
   - {sku: GARBAGE-BAGS, name: Garbage Bags, cat: household, unit: packet, price: 80, aliases: {en: [garbage bag, garbage bags, dustbin bag], hi: [kachra thaili, kachre ki thaili]}}
-  - {sku: DIYA, name: Clay Diya, cat: pooja, unit: pcs, price: 3, aliases: {en: [clay diya, diya pack, deepak], hi: [mitti ke diye, mitti ka diya, diyas], gu: [divo, diva, koDiyu], mr: [panti]}}
+  - {sku: DIYA, name: Clay Diya, cat: pooja, unit: pcs, price: 3, aliases: {en: [clay diya, diya pack], hi: [mitti ke diye, mitti ka diya, diyas], gu: [divo, diva, koDiyu], mr: [panti]}}
   - {sku: CAMPHOR, name: Camphor, cat: pooja, unit: packet, price: 30, aliases: {en: [camphor], hi: [kapur, kapoor, kafoor], gu: [kapoor goti], mr: [karpur]}}
   - {sku: KUMKUM, name: Kumkum / Roli, cat: pooja, unit: packet, price: 10, aliases: {en: [kumkum, roli], gu: [kanku], mr: [kunku]}}
   - {sku: RANGOLI, name: Rangoli Colour, cat: pooja, unit: packet, price: 20, aliases: {en: [rangoli, rangoli colour, rangoli color]}}

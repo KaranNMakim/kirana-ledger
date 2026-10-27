@@ -13,3 +13,10 @@
 - Loader validates the schema (domain/range, required props), categories, units, prices, alias languages, and alias uniqueness. Exports to JSON-LD and Turtle via rdflib. `GET /ontology?format=json|jsonld|turtle`.
 - `GraphStore` protocol with an implementation backed by a NetworkX MultiDiGraph and SQLite write-through. Writes are ontology-validated and every node and edge carries provenance.
 - `names.py`: Devanagari and Gujarati romaniser, canonical folding, phonetic keys, Jaro-Winkler, honorific stripping.
+
+## Phase 2: utterance parser + matching
+- `app/core/parser.py`: deterministic rule parser (mock LLM). It tags each token's role (date, product span, number, unit, currency, cue, postposition, honorific, filler), then derives customer, intent, items, amount and relative date. Covers Hinglish, transliterated Gujarati, and Devanagari/Gujarati script via the romaniser.
+- Handles number words (do sau, dedh, dhai, paav, aadha), `aadha/pura hisaab` balance expressions, line amounts (`50 rupaye ka tel`), post-positioned quantities, mixed payment+sale (forces confirmation), and names that collide with products.
+- `app/core/products.py`: alias resolution as a ladder: exact → generic default (`tel` → sunflower oil, conf 0.8) → generic ambiguous (`dal`) → fuzzy. Also unit conversion (g→kg, paav, dozen) and price-list line amounts.
+- `app/core/customers.py`: honorific stripping, phonetic and string scoring, surname weighting and a gender hint. When two people tie it returns `ambiguous` with candidates instead of guessing.
+- `app/kg/llm.py`: `LLMClient` protocol, `MockLLMClient`, factory. `llm_anthropic.py` is the live client and uses `messages.parse(output_format=ParsedUtterance)`, so both modes return the same schema. It falls back to the rules on any error.

@@ -179,8 +179,12 @@ def jaro_winkler(a: str, b: str, p: float = 0.1) -> float:
     return jaro + prefix * p * (1 - jaro)
 
 
-def similarity(a: str, b: str) -> float:
-    """0..1 similarity between two words/phrases using canonical forms plus a phonetic-equality floor."""
+def similarity(a: str, b: str, phonetic_floor: bool = True) -> float:
+    """0..1 similarity between two words/phrases using canonical forms.
+
+    Names get a phonetic-equality floor (Kishore ≈ Kisor); products only a small bonus, because short
+    product words share skeletons too easily (cheeni/chana both reduce to 'cn').
+    """
     ca, cb = canon_phrase(a), canon_phrase(b)
     if not ca or not cb:
         return 0.0
@@ -190,7 +194,7 @@ def similarity(a: str, b: str) -> float:
     ka = " ".join(phonetic_key(t) for t in ca.split())
     kb = " ".join(phonetic_key(t) for t in cb.split())
     if ka and ka == kb:
-        score = max(score, 0.92)
+        score = max(score, 0.92) if phonetic_floor else min(1.0, score + 0.02)
     return round(score, 4)
 
 
