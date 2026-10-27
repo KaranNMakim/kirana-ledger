@@ -27,3 +27,8 @@
 - `reminders.py`: WhatsApp-style drafts in English, Hinglish and Gujarati transliteration, in gentle or firm tone, with Indian ₹ grouping. A live LLM may rewrite a draft only if the amount survives. Drafts are recorded as `Reminder` nodes with `sent: no`.
 - `pipeline.py`: parse → resolve → per-field checks → auto-save, needs-confirmation (with disambiguation questions) or answered (balance queries). `confirm` supports customer, new customer, items, amount, intent, date and cancel.
 - `data/generate.py`: seeded (42) Jun–Nov 2025 ledger with 60 customers and about 2,700 events. It has five personas, including chronic and festival-late payers, Diwali, Navratri and wedding boosts, and FIFO-consistent payment plans. `data/calendar.yaml` holds the seasons.
+
+## Phase 4: API
+- Endpoints: `POST /utterance`, `POST /utterance/confirm`, `GET /customers` (search, sort, owing_only), `GET /customers/{id}` (profile, pattern evidence, events incl. voided, reminder drafts), `GET /ledger`, `GET /ledger/{id}`, `POST /ledger/{id}/undo`, `POST /ledger/{id}/edit`, `GET /insights`, `GET /graph`, `POST /reminders/draft`, `GET /products/aliases`, `GET /health`, `GET /ontology`.
+- Request logging middleware (JSON lines, `x-request-id`). Ledger errors map to 404/400. The web static export is served at `/app`.
+- Contract tests (`tests/test_api.py`) run against a freshly generated demo DB.
