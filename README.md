@@ -12,7 +12,7 @@ Diwali, and how do I remind them politely?*
 > **POV, not production.** All data is synthetic. Runs fully offline in mock mode. The payment-pattern view is a labelled demo
 > heuristic, **not a credit score**.
 
-<p align="center"><img src="docs/demo.gif" alt="App walkthrough: speak an entry, disambiguate the customer, save, view customers, explain the payment pattern, draft Hinglish and Gujarati reminders, insights, and the udhaar graph" width="320"></p>
+<p align="center"><img src="docs/demo.gif" alt="Walkthrough: set up your own shop, add a customer, add a product with Gujarati local names, teach a new local name, speak a Gujarati entry that saves with zero taps, see your own knowledge graph; then on six months of demo data: customer disambiguation, the explainable payment pattern, a Gujarati reminder draft, seasonal insights, the udhaar graph and graph export" width="320"></p>
 
 **5-minute walkthrough:** [`docs/demo-script.md`](docs/demo-script.md) · **Measured quality:** [`docs/eval-report.md`](docs/eval-report.md) · **Design:** [`PLAN.md`](PLAN.md)
 
