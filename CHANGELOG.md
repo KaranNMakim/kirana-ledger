@@ -32,3 +32,17 @@
 - Endpoints: `POST /utterance`, `POST /utterance/confirm`, `GET /customers` (search, sort, owing_only), `GET /customers/{id}` (profile, pattern evidence, events incl. voided, reminder drafts), `GET /ledger`, `GET /ledger/{id}`, `POST /ledger/{id}/undo`, `POST /ledger/{id}/edit`, `GET /insights`, `GET /graph`, `POST /reminders/draft`, `GET /products/aliases`, `GET /health`, `GET /ontology`.
 - Request logging middleware (JSON lines, `x-request-id`). Ledger errors map to 404/400. The web static export is served at `/app`.
 - Contract tests (`tests/test_api.py`) run against a freshly generated demo DB.
+
+## Phase 5: mobile-first web app
+- Next.js 15 (App Router, static export under `/app`) + TypeScript + Tailwind 4 + Cytoscape.js. It's a PWA, with a manifest and a shell-caching service worker.
+- Ledger screen: big mic (Web Speech `hi-IN` / `gu-IN` / `en-IN`), typed fallback, example chips, confirmation card with one-tap fixes (customer choice, product alternatives, ± qty, amount), saved card with undo, and a live feed with undo / edit.
+- Customer cards: balance, last payment, behaviour summary with a "Why?" evidence list and the not-a-credit-score disclaimer, and a correction history. Also Insights (who owes most, who pays late, monthly bars, seasons, top products), the Udhaar graph (lazy-loaded Cytoscape), and reminder drafts with a copy button.
+- Checked at 360 px: no horizontal overflow, touch targets of at least 36–44 px. The ledger page ships about 112 KB of gzipped JS.
+- Web smoke test (`node --test`): every screen is exported, the PWA files are present, and the JS budget holds with Cytoscape kept out of the initial load.
+
+## Phase 6: eval, docs, polish
+- `evals/utterances.jsonl`: 114 hand-labelled synthetic utterances. `evals/utterances_untuned.jsonl`: 25 written after tuning. `evals/alias_holdout.jsonl`: 65 spellings not in the catalogue.
+- `make eval` → `docs/eval-report.md`: intent, per-field accuracy, alias resolution, disambiguation trigger rate, false-save rate, failure cases and an iteration log.
+- Fixes found by the eval, all generic: weekday short forms swallowing names (Ravi), `paiket` unit, return + give verbs, speech fillers and festival words read as names, English phrasing. A safety fix came from the untuned set: fuzzy product scores are capped by edit distance and discounted ×0.85, so prefix look-alikes (chicken → chickpea) ask instead of saving.
+- `docs/demo-script.md` covers 3 flows plus extras, automated in `tests/test_demo_script.py`. The README has a mermaid architecture diagram, mocked vs real, and next steps to productize.
+- Windows: the task runner and logger force UTF-8 stdout (cp1252 consoles could not print ₹ or →), and the generator reports a clear error when the DB is locked by a running server.

@@ -151,3 +151,10 @@ def test_similarity_and_honorifics():
     assert strip_honorifics(["Meena", "ben"]) == (["meena"], "f")
     assert strip_honorifics(["Shri", "Kishore", "ji"]) == (["kishore"], "m")
     assert strip_honorifics(["smt", "kavita"]) == (["kavita"], "f")
+
+
+def test_edit_ratio():
+    from app.kg.names import edit_ratio, levenshtein
+    assert levenshtein("kitten", "sitting") == 3
+    assert edit_ratio("chawal", "chaval") == 1.0
+    assert edit_ratio("", "x") == 0.0

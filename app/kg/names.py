@@ -179,6 +179,24 @@ def jaro_winkler(a: str, b: str, p: float = 0.1) -> float:
     return jaro + prefix * p * (1 - jaro)
 
 
+def levenshtein(a: str, b: str) -> int:
+    prev = list(range(len(b) + 1))
+    for i, ca in enumerate(a, 1):
+        cur = [i]
+        for j, cb in enumerate(b, 1):
+            cur.append(min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (ca != cb)))
+        prev = cur
+    return prev[-1]
+
+
+def edit_ratio(a: str, b: str) -> float:
+    """1 - normalised edit distance on canonical forms (0..1)."""
+    ca, cb = canon_phrase(a), canon_phrase(b)
+    if not ca or not cb:
+        return 0.0
+    return 1 - levenshtein(ca, cb) / max(len(ca), len(cb))
+
+
 def similarity(a: str, b: str, phonetic_floor: bool = True) -> float:
     """0..1 similarity between two words/phrases using canonical forms.
 

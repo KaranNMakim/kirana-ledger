@@ -38,7 +38,7 @@ CURRENCY = _c("₹ rs rs. rupay rupaye rupaiye rupiya rupiye rupee rupees ru inr
 # ---------------------------------------------------------------- intent cues (canon form)
 SALE_CUES = _c("udhaar udhar udhari udhaari likh likho likhdo likhna likhlo likhiye likhe lakho lakhi lakhjo "
                "lakhvu lakhvanu khata khate khaate credit le liya liye legaya legaye lai laigaya "
-               "lidhu lidha leva")
+               "lidhu lidha leva took add added owes-credit")
 GIVE_CUES = _c("diya diye di de dena dediya dediye diyo aapya aapyu aapi aapo didhu didha dila dile")
 PAYMENT_CUES = _c("jama jamaa chukta chuktaa chukaya chukaye chukavya chukvya chukvi chukave bhara bhare "
                   "bharya bharyu payment paid pay upi gpay paytm phonepe online cash nakad rokda mile mila "
@@ -46,7 +46,7 @@ PAYMENT_CUES = _c("jama jamaa chukta chuktaa chukaya chukaye chukavya chukvya ch
 RETURN_CUES = _c("vapas vaapas wapas wapis return returned lauta lautaya lautaye lotaya pachu pacha pachha "
                  "parat ferat")
 QUERY_CUES = _c("kitna kitne kitni kitnu ketla ketlu ketli kitla kiti balance batao bata batav batavo "
-                "bataiye dikhao dekho kya kab how much what")
+                "bataiye dikhao dekho kya kab how much what owe owes")
 
 POSTPOSITIONS = _c("ko ne ka ki ke nu na ni no e pase taraf se kade")
 STRONG_POSTPOSITIONS = _c("ko ne ka ki ke nu e pase")
@@ -61,10 +61,10 @@ DAYS_AGO_MARKERS = _c("din divas day days")
 AGO_MARKERS = _c("pehle pahle pehele pela pehla pehlaa pahela ago purve")
 LAST_WEEK = [(_c("pichhle pichle last gaya"), _c("hafte hafta week athvadiye athvadiya"))]
 WEEKDAYS = {
-    **dict.fromkeys(_c("somvar monday som"), 0), **dict.fromkeys(_c("mangalvar tuesday mangal"), 1),
-    **dict.fromkeys(_c("budhvar wednesday budh"), 2), **dict.fromkeys(_c("guruvar thursday brihaspativar"), 3),
-    **dict.fromkeys(_c("shukravar friday shukra"), 4), **dict.fromkeys(_c("shanivar saturday shani"), 5),
-    **dict.fromkeys(_c("ravivar itvar sunday ravi"), 6),
+    **dict.fromkeys(_c("somvar monday"), 0), **dict.fromkeys(_c("mangalvar tuesday"), 1),
+    **dict.fromkeys(_c("budhvar wednesday"), 2), **dict.fromkeys(_c("guruvar thursday brihaspativar"), 3),
+    **dict.fromkeys(_c("shukravar friday"), 4), **dict.fromkeys(_c("shanivar saturday"), 5),
+    **dict.fromkeys(_c("ravivar itvar sunday"), 6),
 }
 
 FILLERS = _c(
@@ -73,7 +73,13 @@ FILLERS = _c(
     "hamara uska uski unka unki unke ji please plz bhaiya jara zara ek baar entry note account ledger "
     "mein me ma maa par pe upar thoda thodi aur bhi aapna aapnu taro tamaru maaru chhe che hatu hata "
     "naam name ke liye mate vaste kitna baaki baki pending sab diye de rahe raha rahi gaya gayi gaye "
-    "dijiye dena lena hisab hisaab rupaye"
+    "dijiye dena lena hisab hisaab rupaye "
+    # speech fillers and festival / purpose phrases that precede the real name
+    "umm hmm haan han acha accha ok okay arey arre suno diwali navratri holi rakhi raksha shaadi wedding "
+    "tyohar festival vaste "
+    # English glue words
+    "does did is are was on to from for the of with by has have please"
 ) | CURRENCY
+NAME_INTRODUCERS = _c("to from for")  # English: "add 2 kg rice to Prakash"
 
 ALL_CUES = SALE_CUES | GIVE_CUES | PAYMENT_CUES | RETURN_CUES | QUERY_CUES

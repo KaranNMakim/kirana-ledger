@@ -1,0 +1,138 @@
+{
+  "summary": {
+    "n": 114,
+    "intent": [
+      113,
+      114
+    ],
+    "customer": [
+      113,
+      114
+    ],
+    "item": [
+      95,
+      95
+    ],
+    "qty": [
+      95,
+      95
+    ],
+    "amount": [
+      33,
+      33
+    ],
+    "record": [
+      112,
+      114
+    ],
+    "disambig_recall": [
+      9,
+      9
+    ],
+    "disambig_false": [
+      1,
+      100
+    ],
+    "false_save_all": [
+      0,
+      106
+    ],
+    "false_save_of_saved": [
+      0,
+      79
+    ],
+    "confirm_recall": [
+      29,
+      30
+    ],
+    "saved_though_label_asked": [
+      1,
+      30
+    ],
+    "auto_save_rate": [
+      78,
+      78
+    ],
+    "unneeded_confirm": [
+      0,
+      78
+    ]
+  },
+  "untuned": {
+    "n": 25,
+    "intent": [
+      25,
+      25
+    ],
+    "customer": [
+      24,
+      25
+    ],
+    "item": [
+      17,
+      18
+    ],
+    "qty": [
+      16,
+      18
+    ],
+    "amount": [
+      9,
+      9
+    ],
+    "record": [
+      21,
+      25
+    ],
+    "disambig_recall": [
+      2,
+      2
+    ],
+    "disambig_false": [
+      0,
+      22
+    ],
+    "false_save_all": [
+      0,
+      23
+    ],
+    "false_save_of_saved": [
+      0,
+      13
+    ],
+    "confirm_recall": [
+      6,
+      6
+    ],
+    "saved_though_label_asked": [
+      0,
+      6
+    ],
+    "auto_save_rate": [
+      13,
+      17
+    ],
+    "unneeded_confirm": [
+      4,
+      17
+    ]
+  },
+  "alias": {
+    "exact": [
+      827,
+      827
+    ],
+    "noisy": {
+      "ok": 570,
+      "wrong": 2,
+      "abstain": 12,
+      "n": 584
+    },
+    "holdout": {
+      "ok": 63,
+      "wrong": 0,
+      "abstain": 2,
+      "n": 65
+    }
+  }
+}

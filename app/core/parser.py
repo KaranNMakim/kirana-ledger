@@ -253,14 +253,17 @@ class RuleParser:
             run.append(k)
             k += 1
         conf = 0.85 if any(role[r] == "hon" for r in run) else 0.72
+        if run and k < n and role[k] == "cue" and c[k] not in lx.GIVE_CUES:
+            conf = max(conf, 0.8)  # "Sachin paid 400", "Rohit took 3 maggi"
         if not any(role[r] == "word" for r in run):
             run, conf = [], 0.0
-            for k in range(n):  # anywhere: "500 diye Meena ben"
+            for k in range(n):  # anywhere: "500 diye Meena ben", "add 2 kg rice to Prakash"
                 if role[k] == "word":
+                    intro = k > 0 and c[k - 1] in lx.NAME_INTRODUCERS
                     while k < n and role[k] in NAME_ROLES and len(run) < 4:
                         run.append(k)
                         k += 1
-                    conf = 0.65
+                    conf = 0.8 if intro else 0.65
                     break
         for r in run:
             role[r] = "cust"
@@ -373,7 +376,10 @@ class RuleParser:
         if "expr" in st.role:
             scores["payment"] += 1
         if give:
-            scores["credit_sale" if has_items else "payment"] += 1
+            if scores["return"]:
+                scores["return"] += 1  # "wapas diya", "pachu aapyu", "lauta diya"
+            else:
+                scores["credit_sale" if has_items else "payment"] += 1
         if scores["return"] and not has_items and has_amount:
             scores["payment"] += scores["return"] / 2  # "200 wapas kiye" – money back, probably a payment
             scores["return"] = 0

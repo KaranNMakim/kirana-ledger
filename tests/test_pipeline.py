@@ -138,3 +138,10 @@ def test_generated_demo_data_profiles():
     # reproducible
     _, again = generate(Settings(db_path=":memory:"), verbose=False)
     assert again["events"] == summary["events"] and again["outstanding"] == summary["outstanding"]
+
+
+def test_prefix_lookalike_product_is_not_auto_saved(app):
+    # regression from the untuned eval: "chicken" once fuzzy-matched "chickpea" and saved silently
+    r = app.pipeline.handle("Meena ben ko 1 kilo chicken")
+    assert r.decision == "needs_confirmation"
+    assert app.catalog.resolve("chicken").confidence < 0.75

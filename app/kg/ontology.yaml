@@ -68,7 +68,7 @@ vocab:
     ml:     {kind: volume, base: l, factor: 0.001, surface: [ml, mili, mililitre, milliliter]}
     pcs:    {kind: count, base: pcs, factor: 1.0, surface: [pcs, pc, piece, pieces, peece, nag, nang, adad, dana]}
     dozen:  {kind: count, base: pcs, factor: 12.0, surface: [dozen, darjan, darjun, dazan, darzan]}
-    packet: {kind: pack, base: packet, factor: 1.0, surface: [packet, packets, pkt, paket, packit, pudi, pudiya, padikun, padiku, pouch]}
+    packet: {kind: pack, base: packet, factor: 1.0, surface: [packet, packets, pkt, paket, paiket, paikat, packit, pudi, pudiya, padikun, padiku, pouch]}
     bottle: {kind: pack, base: packet, factor: 1.0, surface: [bottle, botal, batli, shishi]}
     box:    {kind: pack, base: packet, factor: 1.0, surface: [box, dabba, dabbo, dibba, dibbi, dabi, carton]}
     bar:    {kind: pack, base: packet, factor: 1.0, surface: [bar, tikki, goti, cake]}

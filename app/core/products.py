@@ -6,7 +6,7 @@ from dataclasses import dataclass
 
 from app.core.models import ProductCandidate, ResolvedItem
 from app.kg.graph_store import GraphStore
-from app.kg.names import canon, canon_phrase, similarity
+from app.kg.names import canon, canon_phrase, edit_ratio, similarity
 from app.kg.ontology import Ontology, ProductDef
 from app.kg.provenance import Provenance
 
@@ -15,6 +15,8 @@ GENERIC_DEFAULT_CONF = 0.8
 AMBIGUOUS_CONF = 0.45
 FUZZY_MIN = 0.86
 FUZZY_MARGIN = 0.03
+FUZZY_DISCOUNT = 0.85
+EDIT_SLACK = 0.15
 UNIT_MISMATCH_PENALTY = 0.3
 
 
@@ -97,7 +99,9 @@ class ProductCatalog:
     def _fuzzy(self, key: str) -> Resolution:
         best: dict[str, float] = {}
         for alias, sku in self.alias_index.items():
-            s = similarity(key, alias, phonetic_floor=False)
+            # Jaro-Winkler over-rewards shared prefixes (chicken ≈ chickpea 0.91); real typos are 1-2 edits
+            # away, so cap it with the edit-distance ratio
+            s = min(similarity(key, alias, phonetic_floor=False), edit_ratio(key, alias) + EDIT_SLACK)
             if s > best.get(sku, 0.0):
                 best[sku] = s
         for term, g in self.generic.items():
@@ -113,7 +117,9 @@ class ProductCatalog:
         if rivals:
             return Resolution("ambiguous", None, AMBIGUOUS_CONF,
                               [self._cand(s, sc) for s, sc in [ranked[0], *rivals]])
-        return Resolution("fuzzy", top_sku, round(top * 0.9, 3),
+        # a wrong SKU saved silently is the worst outcome (chicken → chickpea), so fuzzy matches are discounted
+        # hard: only near-identical spellings clear the 0.75 auto-save bar
+        return Resolution("fuzzy", top_sku, round(top * FUZZY_DISCOUNT, 3),
                           [self._cand(s, sc) for s, sc in ranked[1:3]])
 
     def _cand(self, sku: str, score: float) -> ProductCandidate:
