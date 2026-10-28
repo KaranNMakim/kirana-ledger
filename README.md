@@ -12,6 +12,8 @@ Diwali, and how do I remind them politely?*
 > **POV, not production.** All data is synthetic. Runs fully offline in mock mode. The payment-pattern view is a labelled demo
 > heuristic, **not a credit score**.
 
+<p align="center"><img src="docs/demo.gif" alt="App walkthrough: speak an entry, disambiguate the customer, save, view customers, explain the payment pattern, draft Hinglish and Gujarati reminders, insights, and the udhaar graph" width="320"></p>
+
 **5-minute walkthrough:** [`docs/demo-script.md`](docs/demo-script.md) · **Measured quality:** [`docs/eval-report.md`](docs/eval-report.md) · **Design:** [`PLAN.md`](PLAN.md)
 
 ## Quick start
