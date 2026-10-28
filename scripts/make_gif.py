@@ -1,11 +1,17 @@
-"""Stitch browser screenshots into a captioned walkthrough GIF (docs/demo.gif)."""
+"""Stitch phone-size app screenshots into a captioned walkthrough GIF.
+
+    py scripts/make_gif.py <screenshots_dir> docs/demo.gif
+
+Screenshots are matched by filename suffix (the keys in FRAMES), captured at 390x844 from `make demo`.
+Needs Pillow (not a project dependency); fonts default to Windows Segoe UI, any TTF works.
+"""
 import glob
 import sys
+from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont
 
-SRC = r"C:\Users\Karan Makim\.claude\projects\C--Users-Karan-Makim-claude-project\77863f6b-c232-4a78-a35f-ba4766b3f254\tool-results"
-OUT = sys.argv[1]
+SRC, OUT = sys.argv[1], sys.argv[2]
 FRAMES = [
     ("zsly89", "Speak or type an udhaar entry", "Hinglish · Hindi · Gujarati, voice or text"),
     ("y9n9sv", "“Ramesh bhai ko 2 kilo chawal udhaar”", "2 kg rice on credit for Ramesh"),
@@ -28,7 +34,7 @@ step_font = ImageFont.truetype(r"C:\Windows\Fonts\segoeuib.ttf", 13)
 
 frames = []
 for n, (key, title, sub) in enumerate(FRAMES, 1):
-    path = glob.glob(f"{SRC}\\*{key}.jpg")[0]
+    path = glob.glob(str(Path(SRC) / f"*{key}.jpg"))[0]
     shot = Image.open(path).convert("RGB")
     shot = shot.resize((W, round(shot.height * W / shot.width)), Image.LANCZOS).crop((0, 0, W, H))
     canvas = Image.new("RGB", (W, H + BAND), "#1c1917")
