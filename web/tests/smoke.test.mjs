@@ -8,7 +8,8 @@ import { fileURLToPath } from "node:url";
 import { gzipSync } from "node:zlib";
 
 const OUT = fileURLToPath(new URL("../out/", import.meta.url));
-const PAGES = ["index.html", "customers/index.html", "customer/index.html", "insights/index.html", "graph/index.html", "reminder/index.html"];
+const PAGES = ["index.html", "customers/index.html", "customer/index.html", "insights/index.html", "graph/index.html", "reminder/index.html",
+  "setup/index.html", "shop/index.html", "customer-new/index.html", "products/index.html"];
 
 test("static export contains every screen", () => {
   for (const p of PAGES) {
@@ -24,7 +25,7 @@ test("ledger screen has mic, typed fallback and bottom nav", () => {
   const html = readFileSync(join(OUT, "index.html"), "utf8");
   assert.match(html, /aria-label="Start speaking"/);
   assert.match(html, /id="utt"/);
-  for (const label of ["Ledger", "Customers", "Insights", "Graph"]) assert.ok(html.includes(`>${label}<`), label);
+  for (const label of ["Ledger", "Customers", "Insights", "Graph", "Shop"]) assert.ok(html.includes(`>${label}<`), label);
 });
 
 test("PWA manifest and service worker", () => {

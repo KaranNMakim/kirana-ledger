@@ -66,6 +66,7 @@ export default function InsightsPage() {
   if (err) return <p role="alert" className="text-red-700">{err}</p>;
   if (!d) return <p className="text-sm text-stone-500">Loading…</p>;
   const t = d.totals, s = d.seasonality;
+  if (!d.monthly.length) return <p className="rounded-xl bg-white p-4 text-sm text-stone-600 ring-1 ring-stone-200">No ledger entries yet. Insights appear once you record some udhaar.</p>;
   const months = d.monthly.map((m: any) => ({ label: shortDate(`${m.month}-01`).split(" ")[1], credit: m.credit, payments: m.payments }));
   return (
     <div className="space-y-4">
@@ -78,7 +79,7 @@ export default function InsightsPage() {
       <Card title="Udhaar given vs collected, by month">
         <Bars data={months} keys={[{ key: "credit", color: "#dc2626", name: "Udhaar given" }, { key: "payments", color: "#059669", name: "Collected" }]} />
       </Card>
-      <Card title="Seasonal pattern">
+      {d.seasons.length > 0 && <Card title="Seasonal pattern">
         <p className="text-sm">Festive and wedding days average <b>{rupees(s.festive_credit_per_day)}/day</b> of udhaar, against <b>{rupees(s.normal_credit_per_day)}/day</b> on other days ({(s.festive_credit_per_day / s.normal_credit_per_day).toFixed(1)}×).</p>
         {s.festive_avg_days_to_pay != null && s.normal_avg_days_to_pay != null && (
           <p className="mt-1 text-sm">Purchases made in festive seasons take <b>{Math.round(s.festive_avg_days_to_pay)} days</b> to clear on average, against <b>{Math.round(s.normal_avg_days_to_pay)}</b> otherwise. Open a customer to see their own festival pattern.</p>
@@ -91,7 +92,7 @@ export default function InsightsPage() {
             </li>
           ))}
         </ul>
-      </Card>
+      </Card>}
       <Card title="Top products on udhaar">
         <ol className="space-y-1 text-sm">
           {d.top_products.slice(0, 8).map((p: any, i: number) => (

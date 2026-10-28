@@ -266,8 +266,9 @@ class InsightsService:
             })
         festive_dates = [e for e in sales if any(s.contains(e.date) for s in self.seasons)]
         normal_dates = [e for e in sales if not any(s.contains(e.date) for s in self.seasons)]
-        festive_days = sum((s.end - s.start).days + 1 for s in self.seasons)
-        span = max(1, (today - min((e.date for e in events), default=today)).days + 1)
+        first = min((e.date for e in events), default=today)
+        span = max(1, (today - first).days + 1)
+        festive_days = sum(max(0, (min(s.end, today) - max(s.start, first)).days + 1) for s in self.seasons)
         fa = [p["features"]["festive_avg_days"] for p in profiles.values() if p["features"]["festive_avg_days"]]
         na = [p["features"]["normal_avg_days"] for p in profiles.values() if p["features"]["normal_avg_days"]]
 

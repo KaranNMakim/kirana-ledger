@@ -20,7 +20,8 @@ Diwali, and how do I remind them politely?*
 
 ```bash
 make setup   # once: Python venv + pip, npm install (needs network once)
-make demo    # fresh seeded data, builds the web app if needed → http://localhost:8141/app/
+make demo    # demo shop: fresh synthetic data every run → http://localhost:8141/app/
+make start   # YOUR shop: separate database (data/myshop.db), starts empty, real date, data is kept
 make test    # pytest (+ coverage gates) and the web smoke test
 make eval    # writes docs/eval-report.md
 ```
@@ -28,6 +29,24 @@ make eval    # writes docs/eval-report.md
 There's no `make` on Windows by default; every target is also `py scripts/tasks.py <target>`.
 Requirements: Python ≥ 3.12 (tested on 3.14) and Node.js LTS (tested on 24). Open the app in Chrome or Edge at phone
 width. Voice uses the browser's Web Speech API (`hi-IN`, `gu-IN`, `en-IN`), and there is always a typed fallback.
+
+## Use it for your own shop
+
+`make start` opens a setup screen on first launch (shop name, area, speaking language). The ledger then starts
+**empty**, in its own database, so the demo never touches it. Everything below builds *your* knowledge graph, and
+every fact you add is stored with `method: human` provenance.
+
+| Screen | What you can do | Graph effect |
+|---|---|---|
+| **Shop → Edit shop details** | Name, area, default speech language (hi-IN / gu-IN / mr-IN / en-IN) | updates the `Shop` node |
+| **Customers → + Add** | Name, bhai / ben, area, nickname. Warns before you add a duplicate ("Already on your ledger?") | new `Customer —belongs_to_shop→ Shop` |
+| **Ledger** (voice or text) | Unknown names are offered as new customers on the confirmation card | `LedgerEvent`, `owes`, `bought`, `paid` |
+| **Shop → Products & local names** | Add your own products (category, unit, price, Hindi / Gujarati / Marathi names); **teach** a new local name for any item (say "bhaat" → Rice); change prices | `Product`, `Alias —alias_of→ Product`. The parser uses them immediately |
+| **Shop → Export your graph** | Download Turtle, JSON-LD or JSON: customers, entries, relations, and W3C PROV provenance for every fact (optionally with the full catalogue) | read-only |
+| **Shop → Start empty** | Type DELETE to wipe customers, entries and reminders. Shop details, products and local names stay | removes instance nodes |
+
+Example: add *Hapus Mango* (₹900/dozen, Gujarati "keri"), teach "bhaat" for rice, then say
+*"Kiranben nu 1 dozen keri ane 2 kilo bhaat lakhi do"*. It saves *Kiran Shah · Hapus Mango + Rice · ₹1,020* without a single tap.
 
 ## Architecture
 
@@ -75,7 +94,10 @@ and `Reminder —about→ Customer`. Every node and edge carries **provenance**:
 
 **API:** `POST /utterance`, `POST /utterance/confirm`, `GET /customers`, `GET /customers/{id}`, `GET /ledger`,
 `POST /ledger/{id}/undo`, `POST /ledger/{id}/edit`, `GET /insights`, `GET /graph`, `POST /reminders/draft`,
-`GET /products/aliases`, `GET /health`, `GET /ontology?format=json|jsonld|turtle`. OpenAPI is at `/docs`.
+`GET /products/aliases`, `GET /health`, `GET /ontology?format=json|jsonld|turtle`.
+Own-shop endpoints: `GET|PUT /shop`, `POST /shop/start-empty`, `POST /customers`, `GET /products/vocab`, `POST /products`,
+`POST /products/{sku}/aliases`, `PATCH /products/{sku}`, `GET /export?format=turtle|jsonld|json&include_catalog=`.
+OpenAPI is at `/docs`.
 
 ## Results (from `make eval`)
 
@@ -99,11 +121,11 @@ Coverage is about 97% on `app/` (the gate is ≥ 80% on `app/core`). The failure
 | LLM parsing | **Real but optional**: `LLM_MODE=live` + `ANTHROPIC_API_KEY` | `messages.parse(output_format=ParsedUtterance)` with model `ANTHROPIC_MODEL` (default `claude-opus-5-5`). It falls back to rules on any error. Not exercised by tests. |
 | Speech-to-text | **Browser** Web Speech API | Accuracy and availability depend on the browser and need network (Chrome). There is no on-device Indic ASR yet. |
 | Knowledge graph | **Real**: NetworkX + SQLite, ontology-validated writes, RDF export | Single shop, single process. |
-| Customer and ledger data | **Synthetic**, seeded (42), 60 customers, Jun–Nov 2025 | Fixed demo clock `KIRANA_TODAY=2025-11-30` (`real` uses system date). |
+| Customer and ledger data | **Synthetic** in `make demo`: seeded (42), 60 customers, Jun–Nov 2025, fixed clock 30 Nov 2025 | **Your own data** in `make start`: empty start, real date, kept in `data/myshop.db` (git-ignored). |
 | Product catalogue and prices | **Curated by hand**, approximate | 162 products, Hindi / Gujarati / Marathi transliterations. |
 | Payment pattern | **Real computation, demo heuristic** | Transparent, evidence-listed, *not* a credit score, not for lending. |
 | Reminders | **Drafts only** | Never sent; copy to clipboard. |
-| Auth, multi-user, sync | **Not built** | See next steps. |
+| Auth, multi-user, sync | **Not built** | One shop per database, no login: run it on your own device. See next steps. |
 
 ## Why a knowledge graph (and not just a table + an LLM)
 

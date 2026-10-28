@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { api, type LedgerEvent, type UtteranceResult } from "../lib/api";
 import { rupees } from "../lib/format";
@@ -24,8 +25,15 @@ export default function LedgerPage() {
   const [feed, setFeed] = useState<LedgerEvent[]>([]);
   const [err, setErr] = useState<string | null>(null);
 
+  const router = useRouter();
   const refresh = useCallback(() => api.ledger(15).then(setFeed).catch((e) => setErr(e.message)), []);
-  useEffect(() => { refresh(); try { setLang(localStorage.getItem("kl-lang") || "hi-IN"); } catch { /* private mode */ } }, [refresh]);
+  useEffect(() => {
+    api.shop().then((s) => {
+      if (!s.configured) router.replace("/setup/");
+      try { setLang(localStorage.getItem("kl-lang") || s.language || "hi-IN"); } catch { setLang(s.language || "hi-IN"); }
+    }).catch(() => undefined);
+    refresh();
+  }, [refresh, router]);
 
   async function submit(t: string) {
     if (!t.trim()) return;
@@ -90,6 +98,12 @@ export default function LedgerPage() {
         <ul className="space-y-2">
           {feed.map((e) => <EventRow key={e.id} e={e} onChange={refresh} />)}
         </ul>
+        {feed.length === 0 && (
+          <p className="rounded-xl bg-white p-4 text-sm text-stone-600 ring-1 ring-stone-200">
+            No entries yet. Speak or type your first udhaar above, e.g. <i>“Ramesh bhai ko 2 kilo chawal udhaar”</i>. A name
+            the app has not heard before is offered as a new customer.
+          </p>
+        )}
       </section>
     </div>
   );

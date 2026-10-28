@@ -45,16 +45,30 @@ export interface ConfirmBody {
   items?: { sku: string; qty: number; unit?: string | null; amount?: number | null }[]; amount?: number; cancel?: boolean;
 }
 
+export class ApiError extends Error {
+  constructor(message: string, public status: number, public body: Record<string, unknown>) { super(message); }
+}
+
 async function call<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(`${API}${path}`, { headers: { "content-type": "application/json" }, cache: "no-store", ...init });
   if (!res.ok) {
-    let detail = res.statusText;
-    try { detail = (await res.json()).detail ?? detail; } catch { /* not json */ }
-    throw new Error(typeof detail === "string" ? detail : JSON.stringify(detail));
+    let body: Record<string, unknown> = {};
+    try { body = await res.json(); } catch { /* not json */ }
+    const d = body.detail ?? res.statusText;
+    const msg = typeof d === "string" ? d : Array.isArray(d) ? d.map((x: { msg?: string }) => x.msg).join("; ") : JSON.stringify(d);
+    throw new ApiError(msg, res.status, body);
   }
   return res.json() as Promise<T>;
 }
 const post = <T,>(path: string, body: unknown) => call<T>(path, { method: "POST", body: JSON.stringify(body) });
+const send = <T,>(method: string, path: string, body: unknown) => call<T>(path, { method, body: JSON.stringify(body) });
+
+export interface Shop {
+  id: string; name: string; locality?: string | null; language: string; mode: "demo" | "own"; configured: boolean;
+  counts: { customers: number; entries: number; products: number; shop_products: number };
+}
+export interface ProductRow { sku: string; name: string; category: string; unit: string; price: number; aliases: Record<string, string[]>; custom?: boolean }
+export interface Vocab { categories: string[]; languages: Record<string, string>; units: Record<string, { kind: string; surface: string[] }> }
 
 export const api = {
   health: () => call<{ today: string; shop: string; llm_mode: string }>("/health"),
@@ -72,5 +86,17 @@ export const api = {
       `/graph?limit=${limit}${customerId ? `&customer_id=${encodeURIComponent(customerId)}` : ""}`),
   reminder: (customer_id: string, language: Lang, tone: "gentle" | "firm") =>
     post<ReminderDraft>("/reminders/draft", { customer_id, language, tone }),
-  products: () => call<{ products: { sku: string; name: string; unit: string; price: number }[] }>("/products/aliases"),
+  products: (q?: string) => call<{ products: ProductRow[] }>(`/products/aliases${q ? `?q=${encodeURIComponent(q)}` : ""}`),
+  vocab: () => call<Vocab>("/products/vocab"),
+  addProduct: (body: { name: string; category: string; unit: string; price: number; aliases: Record<string, string[]> }) =>
+    post<ProductRow>("/products", body),
+  addAlias: (sku: string, text: string, lang: string) => post<ProductRow>(`/products/${encodeURIComponent(sku)}/aliases`, { text, lang }),
+  setPrice: (sku: string, price: number) => send<ProductRow>("PATCH", `/products/${encodeURIComponent(sku)}`, { price }),
+  shop: () => call<Shop>("/shop"),
+  updateShop: (body: { name: string; locality?: string; language?: string }) => send<Shop>("PUT", "/shop", body),
+  startEmpty: () => post<{ removed: Record<string, number>; shop: Shop }>("/shop/start-empty", { confirm: "DELETE" }),
+  addCustomer: (body: { name: string; gender?: string; locality?: string; nickname?: string; force?: boolean }) =>
+    post<{ id: string; name: string }>("/customers", body),
+  exportUrl: (format: "turtle" | "jsonld" | "json", includeCatalog = false) =>
+    `${API}/export?format=${format}${includeCatalog ? "&include_catalog=true" : ""}`,
 };

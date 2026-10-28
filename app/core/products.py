@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import copy
+import re
 from dataclasses import dataclass
 
 from app.core.models import ProductCandidate, ResolvedItem
@@ -18,6 +20,10 @@ FUZZY_MARGIN = 0.03
 FUZZY_DISCOUNT = 0.85
 EDIT_SLACK = 0.15
 UNIT_MISMATCH_PENALTY = 0.3
+
+
+class CatalogError(ValueError):
+    pass
 
 
 @dataclass
@@ -39,7 +45,7 @@ class Resolution:
 class ProductCatalog:
     def __init__(self, ontology: Ontology):
         self.onto = ontology
-        self.products = ontology.products
+        self.products = copy.deepcopy(ontology.products)  # shop edits must not leak into the shared ontology
         self.alias_index: dict[str, str] = {}
         self.alias_lang: dict[str, str] = {}
         for p in self.products.values():
@@ -49,7 +55,7 @@ class ProductCatalog:
                     self.alias_index.setdefault(key, p.sku)
                     self.alias_lang.setdefault(key, lang)
         self.generic = ontology.generic_terms
-        self.max_len = max(len(k.split()) for k in [*self.alias_index, *self.generic])
+        self._refresh_max_len()
         self.unit_index: dict[str, str] = {}
         for code, u in ontology.units.items():
             for s in (code, *u.surface):
@@ -76,6 +82,9 @@ class ProductCatalog:
             else:
                 i += 1
         return spans
+
+    def _refresh_max_len(self) -> None:
+        self.max_len = max(len(k.split()) for k in [*self.alias_index, *self.generic])
 
     def unit_code(self, token: str) -> str | None:
         return self.unit_index.get(canon(token))
@@ -192,10 +201,119 @@ class ProductCatalog:
         rows = []
         for p in self.products.values():
             row = {"sku": p.sku, "name": p.name, "category": p.category, "unit": p.unit, "price": p.price,
-                   "aliases": p.aliases}
+                   "aliases": p.aliases, "custom": p.sku.startswith("SHOP-")}
             rows.append(row)
         if q:
             res = self.resolve(q)
             want = {res.sku} | {a.sku for a in res.alternatives}
-            rows = [r for r in rows if r["sku"] in want]
+            ql = q.lower().strip()
+            def text_hit(r: dict) -> bool:
+                return ql in r["name"].lower() or any(ql in a for forms in r["aliases"].values() for a in forms)
+
+            rows = [r for r in rows if r["sku"] in want or text_hit(r)]
+            # exact alias first, then plain text matches, then fuzzy suggestions
+            rows.sort(key=lambda r: (0 if res.match == "exact" and r["sku"] == res.sku else 1 if text_hit(r) else 2,
+                                     r["name"]))
         return rows
+
+    # ------------------------------------------------------------ shop-specific catalogue (persisted in the graph)
+    def apply_store(self, store: GraphStore) -> None:
+        """Load products / local names / prices the shop added or changed (graph is authoritative)."""
+        for node in store.nodes("Product"):
+            pr = node.props
+            if pr["sku"] not in self.products:
+                self.products[pr["sku"]] = ProductDef(pr["sku"], pr["name"], pr["category"], pr["unit"],
+                                                      float(pr["price"]), pr.get("brand"), {})
+                key = canon_phrase(pr["name"])
+                if key and key not in self.generic:
+                    self.alias_index.setdefault(key, pr["sku"])
+            else:
+                self.products[pr["sku"]].price = float(pr["price"])
+        for e in store.edges(rel="alias_of"):
+            alias = store.get_node(e.src)
+            sku = e.dst.removeprefix("product:")
+            key = alias.props.get("canonical") or canon_phrase(alias.props["text"])
+            if sku in self.products and key not in self.alias_index and key not in self.generic:
+                self.alias_index[key] = sku
+                self.products[sku].aliases.setdefault(alias.props["lang"], []).append(alias.props["text"])
+        self._refresh_max_len()
+
+    def _check_alias(self, text: str, sku: str | None = None) -> str:
+        key = canon_phrase(text)
+        if not key:
+            raise CatalogError("local name is empty")
+        if key in self.generic:
+            raise CatalogError(f"'{text}' is a shared word (like tel or dal) and cannot point to one product")
+        owner = self.alias_index.get(key)
+        if owner and owner != sku:
+            raise CatalogError(f"'{text}' already means {self.products[owner].name}")
+        return key
+
+    def _write_alias(self, store: GraphStore, sku: str, text: str, lang: str, prov: Provenance) -> None:
+        key = self._check_alias(text, sku)
+        aid = f"alias:{lang}:{key.replace(' ', '_')}"
+        store.upsert_node(aid, "Alias", {"text": text.lower(), "lang": lang, "canonical": key}, prov)
+        store.upsert_edge(f"alias_of:{aid}", aid, "alias_of", f"product:{sku}", {}, prov)
+        self.alias_index[key] = sku
+        forms = self.products[sku].aliases.setdefault(lang, [])
+        if text.lower() not in forms:
+            forms.append(text.lower())
+
+    def add_product(self, store: GraphStore, name: str, category: str, unit: str, price: float,
+                    aliases: dict[str, list[str]], prov: Provenance, brand: str | None = None) -> ProductDef:
+        name = " ".join(name.split())
+        if not name:
+            raise CatalogError("product name is empty")
+        if category not in self.onto.categories:
+            raise CatalogError(f"unknown category {category!r}")
+        if unit not in self.onto.units:
+            raise CatalogError(f"unknown unit {unit!r}")
+        if price <= 0:
+            raise CatalogError("price must be more than 0")
+        for lang in aliases:
+            if lang not in self.onto.languages:
+                raise CatalogError(f"unknown language {lang!r}")
+        name_key = canon_phrase(name)
+        if name_key in self.alias_index:
+            raise CatalogError(f"'{name}' already exists as {self.products[self.alias_index[name_key]].name}")
+        forms = [(lang, a.strip()) for lang, items in aliases.items() for a in items if a.strip()]
+        for _, a in forms:
+            self._check_alias(a)
+        base = "SHOP-" + (re.sub(r"[^A-Z0-9]+", "-", name.upper()).strip("-") or "ITEM")
+        sku, n = base, 2
+        while sku in self.products:
+            sku, n = f"{base}-{n}", n + 1
+        props = {"sku": sku, "name": name, "category": category, "unit": unit,
+                 "unit_kind": self.onto.unit_kind(unit), "price": float(price), "custom": "yes"}
+        if brand:
+            props["brand"] = brand
+        with store.batch():
+            store.upsert_node(f"product:{sku}", "Product", props, prov)
+            p = ProductDef(sku, name, category, unit, float(price), brand, {})
+            self.products[sku] = p
+            if name_key not in self.generic:
+                self.alias_index[name_key] = sku
+            for lang, a in forms:
+                self._write_alias(store, sku, a, lang, prov)
+        self._refresh_max_len()
+        return p
+
+    def add_alias(self, store: GraphStore, sku: str, text: str, lang: str, prov: Provenance) -> ProductDef:
+        if sku not in self.products:
+            raise CatalogError(f"unknown product {sku}")
+        if lang not in self.onto.languages:
+            raise CatalogError(f"unknown language {lang!r}")
+        self._write_alias(store, sku, text.strip(), lang, prov)
+        self._refresh_max_len()
+        return self.products[sku]
+
+    def set_price(self, store: GraphStore, sku: str, price: float, prov: Provenance) -> ProductDef:
+        if sku not in self.products:
+            raise CatalogError(f"unknown product {sku}")
+        if price <= 0:
+            raise CatalogError("price must be more than 0")
+        node = store.get_node(f"product:{sku}")
+        store.upsert_node(node.id, "Product", {**node.props, "price": float(price)}, prov)
+        self.products[sku].price = float(price)
+        return self.products[sku]
+

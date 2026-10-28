@@ -7,7 +7,7 @@ import uuid
 
 from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import PlainTextResponse, RedirectResponse
+from fastapi.responses import JSONResponse, PlainTextResponse, RedirectResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
@@ -20,8 +20,11 @@ from app.core.models import (
     ReminderRequest,
     UtteranceResult,
 )
+from app.core.products import CatalogError
 from app.core.reminders import draft_reminder, record_draft
 from app.core.service import KiranaApp
+from app.kg.export import export_json, export_rdf
+from app.kg.provenance import Provenance
 from app.logging_config import configure_logging, get_logger
 from app.settings import Settings
 
@@ -31,6 +34,46 @@ log = get_logger("kirana.api")
 class UtteranceIn(BaseModel):
     text: str = Field(min_length=1, max_length=500, examples=["Ramesh bhai ko 2 kilo chawal udhaar"])
     lang: str | None = Field(default=None, description="Speech language used by the client, e.g. hi-IN")
+
+
+class ShopIn(BaseModel):
+    name: str = Field(min_length=1, max_length=80)
+    locality: str | None = Field(default=None, max_length=80)
+    language: str | None = Field(default=None, pattern="^(hi-IN|gu-IN|en-IN|mr-IN)$")
+
+
+class StartEmptyIn(BaseModel):
+    confirm: str = Field(description='Type "DELETE" to remove all customers, entries and reminders')
+
+
+class CustomerIn(BaseModel):
+    name: str = Field(min_length=1, max_length=60)
+    gender: str | None = Field(default=None, pattern="^(m|f)$")
+    locality: str | None = Field(default=None, max_length=60)
+    nickname: str | None = Field(default=None, max_length=30)
+    force: bool = Field(default=False, description="Add even if a similar customer exists")
+
+
+class ProductIn(BaseModel):
+    name: str = Field(min_length=1, max_length=60)
+    category: str
+    unit: str
+    price: float = Field(gt=0)
+    aliases: dict[str, list[str]] = Field(default_factory=dict, examples=[{"hi": ["aam"], "gu": ["keri"]}])
+    brand: str | None = None
+
+
+class AliasIn(BaseModel):
+    text: str = Field(min_length=1, max_length=40)
+    lang: str = "hi"
+
+
+class PriceIn(BaseModel):
+    price: float = Field(gt=0)
+
+
+def _human(what: str) -> Provenance:
+    return Provenance(source=f"app:{what}", method="human", confidence=1.0)
 
 
 def _err(exc: LedgerError) -> HTTPException:
@@ -65,6 +108,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     def health() -> dict:
         shop = core.ledger.shop()
         return {"status": "ok", "llm_mode": core.llm.mode, "today": settings.today().isoformat(),
+                "mode": settings.mode,
                 "shop": shop.props["name"], "graph": core.store.stats(),
                 "confirm_threshold": settings.confirm_threshold}
 
@@ -75,6 +119,50 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         if format == "jsonld":
             return core.ontology.to_jsonld()
         return core.ontology.summary()
+
+    # ------------------------------------------------------------ shop setup
+    def shop_out() -> dict:
+        s = core.ledger.shop()
+        custom = [p for p in core.catalog.products if p.startswith("SHOP-")]
+        return {"id": s.id, "name": s.props["name"], "locality": s.props.get("locality"),
+                "language": s.props.get("language", "hi-IN"), "mode": settings.mode,
+                "configured": settings.mode == "demo" or s.props.get("configured") == "yes",
+                "counts": {"customers": len(core.store.nodes("Customer")),
+                           "entries": len(core.store.nodes("LedgerEvent")),
+                           "products": len(core.catalog.products), "shop_products": len(custom)}}
+
+    @api.get("/shop")
+    def shop() -> dict:
+        return shop_out()
+
+    @api.put("/shop")
+    def update_shop(body: ShopIn) -> dict:
+        try:
+            core.ledger.update_shop(body.name, body.locality, body.language, _human("shop-setup"))
+        except LedgerError as exc:
+            raise _err(exc) from exc
+        return shop_out()
+
+    @api.post("/shop/start-empty")
+    def start_empty(body: StartEmptyIn) -> dict:
+        if body.confirm != "DELETE":
+            raise HTTPException(400, 'type "DELETE" to confirm')
+        removed = core.ledger.start_empty()
+        core.pipeline.pending.clear()
+        log.info("start_empty", extra={"removed": removed})
+        return {"removed": removed, "shop": shop_out()}
+
+    @api.get("/export")
+    def export(format: str = Query("turtle", pattern="^(turtle|jsonld|json)$"), include_catalog: bool = False):
+        name = "kirana-graph"
+        if format == "json":
+            return JSONResponse(export_json(core.store, include_catalog),
+                                headers={"content-disposition": f'attachment; filename="{name}.json"'})
+        g = export_rdf(core.store, core.ontology, include_catalog)
+        body = g.serialize(format="turtle" if format == "turtle" else "json-ld", indent=2)
+        media, ext = ("text/turtle", "ttl") if format == "turtle" else ("application/ld+json", "jsonld")
+        return Response(body, media_type=media,
+                        headers={"content-disposition": f'attachment; filename="{name}.{ext}"'})
 
     # ------------------------------------------------------------ utterances
     @api.post("/utterance", response_model=UtteranceResult)
@@ -108,6 +196,26 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             rows = [r for r in rows if r["balance"] > 1]
         key = {"balance": lambda r: -r["balance"], "name": lambda r: r["name"], "score": lambda r: r["score"]}[sort]
         return sorted(rows, key=key)
+
+    @api.post("/customers", status_code=201)
+    def add_customer(body: CustomerIn):
+        if not body.force:
+            m = core.matcher.match(body.name)
+            similar = []
+            if m.status == "matched" and m.confidence >= 0.9:
+                similar = [{"id": m.customer_id, "name": m.name}]
+            elif m.status == "ambiguous":
+                similar = [{"id": c.id, "name": c.name} for c in m.candidates]
+            if similar:
+                return JSONResponse(status_code=409, content={
+                    "detail": f"similar customer already exists: {', '.join(c['name'] for c in similar)}",
+                    "similar": similar})
+        try:
+            node = core.ledger.add_customer(body.name, _human("add-customer"), gender=body.gender,
+                                            locality=body.locality, nickname=body.nickname)
+        except LedgerError as exc:
+            raise _err(exc) from exc
+        return {"id": node.id, **node.props}
 
     @api.get("/customers/{cid}")
     def customer(cid: str) -> dict:
@@ -176,6 +284,38 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                                body.language, body.tone, llm=core.llm)
         record_draft(core.store, draft)
         return draft
+
+    @api.get("/products/vocab")
+    def product_vocab() -> dict:
+        o = core.ontology
+        return {"categories": o.categories, "languages": o.languages,
+                "units": {k: {"kind": u.kind, "surface": list(u.surface[:3])} for k, u in o.units.items()}}
+
+    @api.post("/products", status_code=201)
+    def add_product(body: ProductIn) -> dict:
+        try:
+            p = core.catalog.add_product(core.store, body.name, body.category, body.unit, body.price,
+                                         body.aliases, _human("add-product"), body.brand)
+        except CatalogError as exc:
+            raise HTTPException(400, str(exc)) from exc
+        return {"sku": p.sku, "name": p.name, "category": p.category, "unit": p.unit, "price": p.price,
+                "aliases": p.aliases, "custom": True}
+
+    @api.post("/products/{sku}/aliases")
+    def add_alias(sku: str, body: AliasIn) -> dict:
+        try:
+            p = core.catalog.add_alias(core.store, sku, body.text, body.lang, _human("add-local-name"))
+        except CatalogError as exc:
+            raise HTTPException(404 if "unknown product" in str(exc) else 400, str(exc)) from exc
+        return {"sku": p.sku, "name": p.name, "aliases": p.aliases}
+
+    @api.patch("/products/{sku}")
+    def set_price(sku: str, body: PriceIn) -> dict:
+        try:
+            p = core.catalog.set_price(core.store, sku, body.price, _human("set-price"))
+        except CatalogError as exc:
+            raise HTTPException(404 if "unknown product" in str(exc) else 400, str(exc)) from exc
+        return {"sku": p.sku, "name": p.name, "price": p.price}
 
     @api.get("/products/aliases")
     def product_aliases(q: str | None = None) -> dict:

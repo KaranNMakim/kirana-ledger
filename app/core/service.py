@@ -21,8 +21,12 @@ class KiranaApp:
         self.catalog = ProductCatalog(self.ontology)
         if not self.store.nodes("Product"):
             self.catalog.seed_graph(self.store)
+        self.catalog.apply_store(self.store)  # products, local names and prices the shop added
         self.ledger = LedgerService(self.store, self.catalog, settings.today)
-        self.ledger.ensure_shop()
+        if settings.mode == "own":
+            self.ledger.ensure_shop("My Kirana Store", None)  # renamed on the setup screen
+        else:
+            self.ledger.ensure_shop()
         self.matcher = CustomerMatcher(self.store, self.ledger.balance)
         self.llm = get_llm_client(settings.llm_mode, self.catalog, settings.anthropic_model)
         self.pipeline = UtterancePipeline(self.llm, self.catalog, self.ledger, self.matcher,

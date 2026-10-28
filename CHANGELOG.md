@@ -46,3 +46,12 @@
 - Fixes found by the eval, all generic: weekday short forms swallowing names (Ravi), `paiket` unit, return + give verbs, speech fillers and festival words read as names, English phrasing. A safety fix came from the untuned set: fuzzy product scores are capped by edit distance and discounted ×0.85, so prefix look-alikes (chicken → chickpea) ask instead of saving.
 - `docs/demo-script.md` covers 3 flows plus extras, automated in `tests/test_demo_script.py`. The README has a mermaid architecture diagram, mocked vs real, and next steps to productize.
 - Windows: the task runner and logger force UTF-8 stdout (cp1252 consoles could not print ₹ or →), and the generator reports a clear error when the DB is locked by a running server.
+
+## Own-shop mode
+- `make start`: your own shop in `data/myshop.db` (separate from the demo), starts empty, real date, and data persists. A first-run **setup screen** asks for shop name, area and speaking language. `make demo` is unchanged.
+- **Add customer** form with a duplicate guard: a 409 shows "Already on your ledger?" and lets you add anyway.
+- **Products & local names**: add shop products (category, unit, price, hi / gu / mr names), teach new local names for any product, and change prices. These are stored as `Product` and `Alias —alias_of→ Product` nodes with human provenance, reloaded on start, and used by the parser immediately. Alias collisions and shared words (tel, dal) are rejected.
+- **Graph export** `GET /export`: the whole instance graph as Turtle, JSON-LD or JSON, with every relation reified as an `rdf:Statement` carrying W3C PROV-O provenance. The catalogue is optional.
+- **Start empty** `POST /shop/start-empty` (type DELETE): removes customers, entries and reminders, and keeps the shop and catalogue.
+- New **Shop** tab, an add button on Customers, empty states for a fresh ledger, and the seasonal card hidden when there is no seasonal data. Season-day counts now only include days inside the data window.
+- Tests: `tests/test_own_shop.py` (setup, duplicate guard, custom product used by voice, alias + price change, persistence across restart, start-empty, export round-trip through rdflib).

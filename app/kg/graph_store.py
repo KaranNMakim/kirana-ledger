@@ -45,6 +45,7 @@ class GraphStore(Protocol):
                     prov: Provenance) -> Edge: ...
     def edges(self, rel: str | None = None, src: str | None = None, dst: str | None = None) -> list[Edge]: ...
     def remove_edge(self, edge_id: str) -> None: ...
+    def remove_node(self, node_id: str) -> None: ...
     def batch(self) -> Any: ...
     @property
     def version(self) -> int: ...
@@ -158,6 +159,18 @@ class NetworkXSQLiteStore:
             src, dst = self._edge_index.pop(edge_id)
             self._g.remove_edge(src, dst, key=edge_id)
             self._db.execute("DELETE FROM edges WHERE id=?", (edge_id,))
+            self._commit()
+
+    def remove_node(self, node_id: str) -> None:
+        """Delete a node and every edge touching it."""
+        with self._lock:
+            if node_id not in self._g:
+                return
+            for _, _, key in list(self._g.in_edges(node_id, keys=True)) + list(self._g.out_edges(node_id, keys=True)):
+                self._edge_index.pop(key, None)
+            self._g.remove_node(node_id)
+            self._db.execute("DELETE FROM edges WHERE src=? OR dst=?", (node_id, node_id))
+            self._db.execute("DELETE FROM nodes WHERE id=?", (node_id,))
             self._commit()
 
     def edges(self, rel: str | None = None, src: str | None = None, dst: str | None = None) -> list[Edge]:

@@ -30,6 +30,7 @@ class Settings:
     confirm_threshold: float = 0.75
     log_level: str = "INFO"
     web_dir: Path = field(default=ROOT / "web" / "out")
+    mode: str = "demo"  # demo = seeded synthetic shop · own = your shop, starts empty, real clock
 
     def today(self) -> dt.date:
         if self.today_override.lower() == "real":
@@ -49,4 +50,5 @@ class Settings:
             today_override=os.environ.get("KIRANA_TODAY", DEMO_TODAY.isoformat()),
             confirm_threshold=float(os.environ.get("CONFIRM_THRESHOLD", "0.75")),
             log_level=os.environ.get("LOG_LEVEL", "INFO"),
+            mode=os.environ.get("KIRANA_MODE", "demo").lower(),
         )

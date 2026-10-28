@@ -33,15 +33,39 @@ class LedgerService:
         self._balance_cache()  # build before any write, so new events are only counted via _apply
 
     # ------------------------------------------------------------ shop & customers
-    def ensure_shop(self, name: str = "Shree Ganesh Kirana Stores", locality: str = "Maninagar, Ahmedabad") -> Node:
+    def ensure_shop(self, name: str = "Shree Ganesh Kirana Stores",
+                    locality: str | None = "Maninagar, Ahmedabad") -> Node:
         node = self.store.get_node(SHOP_ID)
         if node is None:
-            node = self.store.upsert_node(SHOP_ID, "Shop", {"name": name, "locality": locality},
-                                          Provenance.seed("shop"))
+            props = {"name": name, **({"locality": locality} if locality else {})}
+            node = self.store.upsert_node(SHOP_ID, "Shop", props, Provenance.seed("shop"))
         return node
 
     def shop(self) -> Node:
         return self.ensure_shop()
+
+    def update_shop(self, name: str, locality: str | None, language: str | None, prov: Provenance) -> Node:
+        name = " ".join(name.split())
+        if not name:
+            raise LedgerError("shop name is empty")
+        props = {**self.shop().props, "name": name, "configured": "yes"}
+        for k, v in (("locality", locality), ("language", language)):
+            if v:
+                props[k] = v.strip()
+        return self.store.upsert_node(SHOP_ID, "Shop", props, prov)
+
+    def start_empty(self) -> dict[str, int]:
+        """Delete every customer, ledger entry and reminder (the product catalogue and shop stay)."""
+        removed = {}
+        with self.store.batch():
+            for ntype in ("LedgerEvent", "Reminder", "Customer"):
+                nodes = self.store.nodes(ntype)
+                for n in nodes:
+                    self.store.remove_node(n.id)
+                removed[ntype] = len(nodes)
+        self._balances = {}
+        self._seq = 0
+        return removed
 
     def add_customer(self, name: str, prov: Provenance, gender: str | None = None,
                      locality: str | None = None, nickname: str | None = None,

@@ -9,7 +9,7 @@ else
 endif
 PY := $(if $(wildcard $(VENV_PY)),$(VENV_PY),$(BOOT_PY))
 
-.PHONY: setup seed test lint eval web-build web-test demo dev clean
+.PHONY: setup seed test lint eval web-build web-test demo start dev clean
 
 setup:      ; $(PY) scripts/tasks.py setup
 seed:       ; $(PY) scripts/tasks.py seed
@@ -19,5 +19,6 @@ eval:       ; $(PY) scripts/tasks.py eval
 web-build:  ; $(PY) scripts/tasks.py web-build
 web-test:   ; $(PY) scripts/tasks.py web-test
 demo:       ; $(PY) scripts/tasks.py demo
+start:      ; $(PY) scripts/tasks.py start
 dev:        ; $(PY) scripts/tasks.py dev
 clean:      ; $(PY) scripts/tasks.py clean

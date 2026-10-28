@@ -56,7 +56,7 @@ def test_seed_graph_and_alias_table(catalog, store):
     assert len(store.nodes("Product")) == len(catalog.products)
     assert len(store.edges("alias_of")) > 600
     rows = catalog.alias_table("chawal")
-    assert [r["sku"] for r in rows] == ["RICE-KOLAM"]
+    assert rows[0]["sku"] == "RICE-KOLAM" and {"RICE-BASMATI", "RICE-SONA"} <= {r["sku"] for r in rows}
     assert len(catalog.alias_table()) == len(catalog.products)
 
 

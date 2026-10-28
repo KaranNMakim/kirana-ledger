@@ -92,7 +92,16 @@ def serve(reload: bool = False) -> None:
 
 
 def demo() -> None:
+    os.environ.update(KIRANA_MODE="demo", KIRANA_DB="data/kirana.db")
     seed()  # fresh, reproducible state every demo
+    web_build(force=False)
+    serve()
+
+
+def start() -> None:
+    """Your own shop: separate database (data/myshop.db), starts empty, real date, data kept between runs."""
+    os.environ.update(KIRANA_MODE="own", KIRANA_DB=os.environ.get("KIRANA_SHOP_DB", "data/myshop.db"),
+                      KIRANA_TODAY="real")
     web_build(force=False)
     serve()
 
@@ -113,7 +122,7 @@ def clean() -> None:
 
 TASKS = {
     "setup": setup, "seed": seed, "test": test, "lint": lint, "eval": eval_,
-    "web-build": web_build, "web-test": web_test, "demo": demo, "dev": dev, "clean": clean,
+    "web-build": web_build, "web-test": web_test, "demo": demo, "start": start, "dev": dev, "clean": clean,
 }
 
 if __name__ == "__main__":

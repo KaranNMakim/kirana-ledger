@@ -16,9 +16,15 @@ export default function CustomersPage() {
 
   return (
     <div className="space-y-3">
-      <label htmlFor="q" className="sr-only">Search customers</label>
-      <input id="q" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search: Ramesh, meenaben, Kishor…"
-        className="min-h-12 w-full rounded-xl border border-stone-300 bg-white px-3" />
+      <div className="flex gap-2">
+        <label htmlFor="q" className="sr-only">Search customers</label>
+        <input id="q" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search: Ramesh, meenaben, Kishor…"
+          className="min-h-12 min-w-0 flex-1 rounded-xl border border-stone-300 bg-white px-3" />
+        <Link href="/customer-new/" className="flex min-h-12 shrink-0 items-center rounded-xl bg-[var(--color-saffron)] px-4 font-semibold text-white">+ Add</Link>
+      </div>
+      {rows?.length === 0 && !q && (
+        <p className="rounded-xl bg-white p-4 text-sm text-stone-600 ring-1 ring-stone-200">No customers yet. Tap <b>+ Add</b>, or just speak an entry on the Ledger tab.</p>
+      )}
       {err && <p role="alert" className="text-sm text-red-700">{err}</p>}
       {!rows && !err && <p className="text-sm text-stone-500">Loading…</p>}
       <ul className="space-y-2">
