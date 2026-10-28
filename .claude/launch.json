@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "kirana-ledger",
+      "runtimeExecutable": ".venv/Scripts/python.exe",
+      "runtimeArgs": ["-m", "uvicorn", "app.api.main:app", "--host", "127.0.0.1", "--port", "8141"],
+      "port": 8141
+    }
+  ]
+}

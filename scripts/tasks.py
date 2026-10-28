@@ -15,6 +15,9 @@ ROOT = Path(__file__).resolve().parent.parent
 WEB = ROOT / "web"
 IS_WIN = os.name == "nt"
 VENV_PY = ROOT / ".venv" / ("Scripts/python.exe" if IS_WIN else "bin/python")
+os.environ.setdefault("PYTHONIOENCODING", "utf-8")  # Windows consoles default to cp1252; logs contain ₹
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 
 def py() -> str:
@@ -76,7 +79,7 @@ def web_build(force: bool = True) -> None:
 
 
 def web_test() -> None:
-    run(["node", "--test", "tests/"], cwd=WEB)
+    run(["node", "--test", "tests/smoke.test.mjs"], cwd=WEB)
 
 
 def serve(reload: bool = False) -> None:

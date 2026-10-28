@@ -5,28 +5,28 @@
     "2025-11-30"
   ],
   "customers": 60,
-  "events": 2674,
+  "events": 2642,
   "by_kind": {
     "credit_sale": 1554,
-    "payment": 1096,
+    "payment": 1064,
     "return": 24
   },
-  "outstanding": 166850.17,
+  "outstanding": 167143.5,
   "graph": {
     "nodes": {
       "Product": 162,
       "Alias": 769,
       "Shop": 1,
       "Customer": 60,
-      "LedgerEvent": 2674
+      "LedgerEvent": 2642
     },
     "edges": {
       "alias_of": 769,
       "belongs_to_shop": 60,
-      "paid": 1096,
+      "paid": 1064,
       "owes": 60,
       "bought": 3700,
-      "recorded_for": 2674,
+      "recorded_for": 2642,
       "includes": 3724
     }
   }

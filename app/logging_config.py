@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import contextlib
 import json
 import logging
 import sys
@@ -29,6 +30,9 @@ def configure_logging(level: str = "INFO") -> None:
     if any(isinstance(h.formatter, JsonFormatter) for h in root.handlers):
         root.setLevel(level)
         return
+    if hasattr(sys.stdout, "reconfigure"):
+        with contextlib.suppress(ValueError, OSError):
+            sys.stdout.reconfigure(encoding="utf-8", errors="replace")  # ₹ in logs on cp1252 consoles
     handler = logging.StreamHandler(sys.stdout)
     handler.setFormatter(JsonFormatter())
     root.handlers = [handler]

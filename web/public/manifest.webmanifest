@@ -1,0 +1,11 @@
+{
+  "name": "Kirana Ledger",
+  "short_name": "Udhaar",
+  "description": "Voice-first udhaar ledger (demo, synthetic data)",
+  "start_url": "/app/",
+  "scope": "/app/",
+  "display": "standalone",
+  "background_color": "#fffaf3",
+  "theme_color": "#b45309",
+  "icons": [{ "src": "/app/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+}

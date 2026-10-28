@@ -97,7 +97,10 @@ def generate(settings: Settings, verbose: bool = True) -> tuple[KiranaApp, dict]
     if settings.db_path != ":memory:":
         for p in (db, Path(str(db) + "-journal")):
             if p.exists():
-                p.unlink()
+                try:
+                    p.unlink()
+                except PermissionError:
+                    sys.exit(f"{p} is in use - stop the running server (Ctrl+C) and run again.")
     app = KiranaApp(settings)
     today = settings.today()
     end = min(today, DEMO_TODAY) if settings.today_override.lower() != "real" else today
@@ -176,8 +179,8 @@ def generate(settings: Settings, verbose: bool = True) -> tuple[KiranaApp, dict]
             else:
                 rest.append(ev)
         for (d, cid), amt in merged.items():
-            amt = round(amt / 10) * 10 if amt > 50 else round(amt, 2)  # shopkeepers round to ₹10
-            if amt > 0:
+            amt = round(amt / 10) * 10  # shopkeepers round to ₹10; tiny short-pays are just carried
+            if amt >= 20:
                 rest.append((d, 1, "payment", cid, amt, [], None))
         rest.sort(key=lambda e: (e[0], e[1], e[3]))
         for d, _, kind, cid, amount, items, utt in rest:
