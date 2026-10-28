@@ -103,6 +103,32 @@ Coverage is about 97% on `app/` (the gate is ≥ 80% on `app/core`). The failure
 | Reminders | **Drafts only** | Never sent; copy to clipboard. |
 | Auth, multi-user, sync | **Not built** | See next steps. |
 
+## Why a knowledge graph (and not just a table + an LLM)
+
+- **Local language is a vocabulary problem before it is an AI problem.** *chawal / chokha / tandul*, *saakar / khand / cheeni* and *tel* (which oil?) are aliases of the same few products. The ontology makes these `Alias —alias_of→ Product` facts, with units (kilo, paav, ser, dozen) as first-class concepts. Adding a dialect means adding data, not retraining a model.
+- **The graph is the guardrail.** The LLM (or rule parser) only extracts strings. Resolving them to a real customer and SKU is deterministic and validated against the ontology, so the system cannot invent a product, and two matching "Ramesh"es become a question rather than a guess.
+- **Provenance makes it trustworthy.** Every fact records who or what asserted it (rule, model or human), from which utterance, and with what confidence. Corrections are new facts that `correct` old ones, which gives an audit trail a shopkeeper (and later a lender) can rely on.
+- **Insights are graph queries.** Who owes what, bought what, and pays when, across festivals, is a traversal over `owes`, `bought` and `paid`, and the "why" behind each signal is the evidence path.
+- **Interoperable by design.** The ontology exports to JSON-LD and Turtle, so the same model can map onto open-network schemas (ONDC catalogues, Account Aggregator data) instead of becoming another silo.
+
+## Fit with Digital India: a commercialisation path
+
+India has over 6 crore MSMEs and more than a crore kirana stores. Most informal credit lives in notebooks. The public digital stack already provides the rails; what is missing is a voice-first, local-language front end that turns everyday shop talk into structured, consented data. One path:
+
+| Digital India building block | How kirana-ledger would plug in |
+|---|---|
+| **Bhashini** (national language AI mission) | Swap browser speech for Bhashini ASR and translation APIs across 22 scheduled languages. The ontology's alias layer absorbs dialect variation. |
+| **UPI** | Shopkeeper-initiated collect links in reminder drafts. Incoming UPI credits auto-matched to open udhaar as `payment` events with `method: rule` provenance. |
+| **Account Aggregator + DEPA consent** | Opt-in, purpose-bound, revocable sharing of *summarised* cash-flow and repayment patterns, never raw entries, to help shops (not their customers) access working capital. |
+| **OCEN** (Open Credit Enablement Network) | The consented ledger summary becomes an input for small-ticket working-capital loans to the shop, through lender partners. |
+| **ONDC** | The same product ontology maps a kirana's catalogue onto ONDC listings, a step from a credit ledger to digital selling. |
+| **Udyam registration / MSME schemes** | Simple monthly books help shops formalise and qualify for schemes that need records. |
+| **IndiaAI Mission** | A fit for compute or grant programmes that back Indic-language AI for underserved users. |
+
+**Business model hypothesis (to be validated):** freemium. A free tier up to about 50 customers, then **₹199–299/month** for unlimited customers, reminders and multi-device sync. Distribution through FMCG distributors, banks' merchant networks and UPI/QR partners who already visit these shops. Future revenue from consented, regulated credit partnerships where the shop opts in, never from selling data. Pilot plan: 20–30 shops in Gujarat and North India for 8 weeks, measuring entries per day, taps per entry, and udhaar recovered.
+
+*These are alignment opportunities, not existing partnerships or endorsements.*
+
 ## Next steps to productize
 
 1. **Offline-first sync.** On-device store (SQLite/IndexedDB) with an append-only event log that already matches the provenance model. CRDT-style merge of events (events are immutable, corrections are new events), sync over flaky 2G/3G, and a WhatsApp-style "pending" indicator.
